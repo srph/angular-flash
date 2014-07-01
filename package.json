@@ -1,0 +1,30 @@
+{
+  "name": "angular-flash",
+  "version": "0.2.0",
+  "description": "angular-flash\r =============",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/srph/angular-flash.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/srph/angular-flash/issues"
+  },
+  "homepage": "https://github.com/srph/angular-flash",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-bower": "^0.13.4",
+    "grunt-contrib-concat": "^0.4.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-uglify": "^0.5.0",
+    "grunt-contrib-watch": "^0.6.1"
+  }
+}
