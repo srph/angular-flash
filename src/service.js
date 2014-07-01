@@ -3,6 +3,13 @@ app.service('FlashService', [
 	function($rootScope) {
 		return {
 			/**
+			 * Lifetime of each flash
+			 *
+			 * @var 	int
+			 */
+			lifetime: 5000,
+			
+			/**
 			 * List of registered names
 			 *
 			 * @var array
@@ -10,45 +17,13 @@ app.service('FlashService', [
 			registry: [],
 
 			/**
-			 * Registers the name with its respective class to
-			 * the service registry
-			 *
-			 * @param 	object|array 	data	Data?
-			 * @return 	this
-			 */
-			register: function(data) {
-				// Recursion when the passed argument is an
-				// array of objects
-				if ( data instanceof Array ) {
-					angular.foreach(i, (function(_this) {
-						_this.register(i);
-					}(this));
-				} else {
-
-					// If the given name has already been registered
-					// in the registry, cancel operations,
-					// return an error
-					if ( this.isInRegistry(data.name) ) {
-						console.error('Given name is already in the registry');
-						return;
-					}
-
-					// Push the data to the registry
-					this.registry.push(data);
-
-					// Return the object for method chaining
-				}
-				return this;
-			},
-
-			/**
-			 * Checks if the passed name is already in the registry
+			 * Checks if the passed type is already in the registry
 			 *
 			 * @param 	string 		name
 			 * @return 	boolean
 			 */
-			isInRegistry: function(name) {
-				return this.registry.indexOf(name) == -1;
+			isInRegistry: function(type) {
+				return this.registry.indexOf(type) == -1;
 			}
 
 			/**
@@ -63,15 +38,19 @@ app.service('FlashService', [
 			 *
 			 * @return 	this
 			 */
-			show: function(name, message) {
+			fire: function(type, message) {
 				if( ! this.isInRegistry(name) ) {
 					console.error('Given name is not in the registry!');
 					return;
 				}
 
-				// $rootScope.$emit('$flash');
-				// this.list.push();
+				// Push the flash to the list
+				this.list.push({ type: type, message: message});
+
+				// Emit
+				$rootScope.$emit('$flashFired');
 			}
+
 		}
 	}
 ]);
