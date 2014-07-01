@@ -29,10 +29,13 @@
 
 		app.controller([
 			'$scope',
-			'FlashService',
-			function($scope) {
+			'$flash',
+			function($scope, $flash) {
 				$scope.flash = function(message) {
-					FlashService.fire(message);
+					var random = (Math.random * 10) + 0;
+					var haystack = $flash.registry;
+					var needle = haystack[random];
+					$flash.fire({ type: needle.type, message: needle.message });
 				}
 			}
 		]);

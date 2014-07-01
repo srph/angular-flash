@@ -1,13 +1,32 @@
-app.provider('$flashProvider', [
+app.provider('$flash', [
 	function() {
+		var flash = {};
+
+		/**
+		 * List of registered names
+		 *
+		 * @var array
+		 */
+		flash.registry = [],
+
+		/**
+		 * Checks if the passed type is already in the registry
+		 *
+		 * @param 	string 		name
+		 * @return 	boolean
+		 */
+		flash.isInRegistry= function(type) {
+			return this.registry.indexOf(type) == -1;
+		}
+
 		/**
 		 * A get or setter for the lifetime of each flash
 		 *
 		 * @param 	int 	ms
 		 * @return 	int
 		 */
-		var lifetime = function(ms) {
-			var life = FlashService.lifetime = 5000 || ms;
+		flash.lifetime = function(ms) {
+			var life = this.span = 5000 || ms;
 			return life;
 		}
 
@@ -18,7 +37,7 @@ app.provider('$flashProvider', [
 		 * @param 	object|array 	data	Data?
 		 * @return 	this
 		 */
-		var register = function(data) {
+		flash.register = function(data) {
 
 			if ( data instanceof Array ) {
 				// Recursion when the passed argument is an
@@ -31,12 +50,12 @@ app.provider('$flashProvider', [
 
 				// If the given name has already been registered
 				// in the registry, cancel operations and return an error
-				if ( service.isInRegistry(data.name) ) {
+				if ( this.isInRegistry(data.name) ) {
 					return console.error('Given name is already in the registry');
 				}
 
 				// Push the data to the registry
-				service.registry.push(data);
+				this.registry.push(data);
 
 			} else {
 				return console.error('Data is not an object!');
@@ -44,19 +63,56 @@ app.provider('$flashProvider', [
 
 			// Return the object for method chaining
 			return this;
+		};
 
+		/**
+		 * Lifetime of each flash
+		 *
+		 * @var 	int
+		 */
+		flash.span = 5000;
+
+		/**
+		 * List of messages being shown
+		 *
+		 * @var array
+		 */
+		flash.list = [];
+
+		/**
+		 * Flash the message right now
+		 *
+		 * @param 	object 	data
+		 * @return 	this
+		 */
+		flash.fire = function(data) {
+			if ( data instanceof Array )  {
+				// Recursion when the passed argument is an
+				// array of objects
+				angular.forEach(data, function(value, key) {
+					this.register(key);
+				}, this);
+			} else if ( typeof data === "object" ) {
+				if ( ! this.isInRegistry(name) ) {
+					return console.error('Given name is not in the registry!');
+				}
+
+				// Push the flash to the list
+				this.list.push(data);
+
+				// Emit
+				$rootScope.$emit('$flashFired');
+			} else {
+				return console.error('Not an object nor an array');
+			}
+
+			return this;
 		};
 
 		this.$get = [
 			'$rootScope',
-			'FlashService',
-			function($rootScope, FlashService) {
-
-				return {
-					lifetime: lifetime
-					register: register
-				};
-
+			function($rootScope) {
+				return flash;
 			}
 		];
 	}

@@ -23,7 +23,7 @@ app.directive('flash', [
 
 			$rootScope.$on('$flashFired', function() {
 				// Let the removal of every 0-index in the array begin
-				pop();
+				shift();
 			});
 		}
 
