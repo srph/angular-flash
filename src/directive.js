@@ -1,31 +1,33 @@
 app.directive('flash', [
-	'$rootScope'
-	function($rootScope) {
+	function() {
+		var controller = [
+			'$scope',
+			'$rootScope',
+			'$flash',
+			function($scope, $rootScope, $flash) {
+				$scope.list = [];
+				// Removes the first one in the list every 5 seconds
+				// until none remains
+				var shift = function() {
+					// An infinite loop broken only when none remains
+					while(true) {
+						if ( ! FlashService.list.count ) break;
 
-		var controller = function($scope, $rootScope) {
-			$scope.list = [];
-			// Removes the first one in the list every 5 seconds
-			// until none remains
-			var shift = function() {
-				// An infinite loop broken only when none remains
-				while(true) {
-					if ( ! FlashService.list.count ) break;
+						$timeout(function() {
+							FlashService.list.shift();
+							$scope.list = FlashService.list;
+							$rootScope.$on('$flashFiredRemoved');
+						}, FlashService.lifetime, true);
+					}
 
-					$timeout(function() {
-						FlashService.list.shift();
-						$scope.list = FlashService.list;
-						$rootScope.$on('$flashFiredRemoved');
-					}, FlashService.lifetime, true);
+					return;
 				}
 
-				return;
-			}
-
-			$rootScope.$on('$flashFired', function() {
-				// Let the removal of every 0-index in the array begin
-				shift();
-			});
-		}
+				$rootScope.$on('$flashFired', function() {
+					// Let the removal of every 0-index in the array begin
+					shift();
+				});
+		}];
 
 		return {
 			restrict:'AE'
@@ -36,11 +38,7 @@ app.directive('flash', [
 						'<p> {{ item.message }} </p>'
 					'</div>' +
 				'</div>',
-			controller: [
-				'$scope',
-				'$rootScope',
-				controller
-			]
+			controller: controller
 		}
 	}
 ]);
