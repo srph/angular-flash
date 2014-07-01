@@ -3,11 +3,18 @@ app.provider('$flash', [
 		var flash = {};
 
 		/**
+		 * Lifetime of each flash
+		 *
+		 * @var 	int
+		 */
+		flash._lifetime = 5000;
+
+		/**
 		 * List of registered names
 		 *
 		 * @var array
 		 */
-		flash.registry = [],
+		flash._registry = [],
 
 		/**
 		 * Checks if the passed type is already in the registry
@@ -15,8 +22,8 @@ app.provider('$flash', [
 		 * @param 	string 		name
 		 * @return 	boolean
 		 */
-		flash.isInRegistry= function(type) {
-			return this.registry.indexOf(type) == -1;
+		flash._isInRegistry= function(type) {
+			return this._registry.indexOf(type) == -1;
 		}
 
 		/**
@@ -26,7 +33,7 @@ app.provider('$flash', [
 		 * @return 	int
 		 */
 		flash.lifetime = function(ms) {
-			var life = this.span = 5000 || ms;
+			var life = this._lifetime = this._lifetime || ms;
 			return life;
 		}
 
@@ -50,12 +57,12 @@ app.provider('$flash', [
 
 				// If the given name has already been registered
 				// in the registry, cancel operations and return an error
-				if ( this.isInRegistry(data.name) ) {
+				if ( this._isInRegistry(data.name) ) {
 					return console.error('Given name is already in the registry');
 				}
 
 				// Push the data to the registry
-				this.registry.push(data);
+				this._registry.push(data);
 
 			} else {
 				return console.error('Data is not an object!');
@@ -66,18 +73,11 @@ app.provider('$flash', [
 		};
 
 		/**
-		 * Lifetime of each flash
-		 *
-		 * @var 	int
-		 */
-		flash.span = 5000;
-
-		/**
 		 * List of messages being shown
 		 *
 		 * @var array
 		 */
-		flash.list = [];
+		flash._list = [];
 
 		/**
 		 * Flash the message right now
@@ -93,12 +93,12 @@ app.provider('$flash', [
 					this.register(key);
 				}, this);
 			} else if ( typeof data === "object" ) {
-				if ( ! this.isInRegistry(name) ) {
+				if ( ! this._isInRegistry(name) ) {
 					return console.error('Given name is not in the registry!');
 				}
 
 				// Push the flash to the list
-				this.list.push(data);
+				this._list.push(data);
 
 				// Emit
 				$rootScope.$emit('$flashFired');
