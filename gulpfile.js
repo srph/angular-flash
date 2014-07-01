@@ -15,13 +15,13 @@ var
 // Install Bower components
 gulp.task('install', function() {
 	// Locate the source file then run the install function
-	gulp.src(['./bower.json'])
+	return gulp.src(['./bower.json'])
 		.pipe(install());
 });
 
 gulp.task('scripts', function() {
 	// Locate all js files in the src folder
-	gulp.src(src + '*.js')
+	return gulp.src([src + 'module.js', src + 'provider.js', src + 'directive.js',])
 		// Concatenate all files to a single one,
 		// then move the concatenated file to the dist/ folder
 		.pipe(concat('angular-flash.js'))
@@ -29,8 +29,22 @@ gulp.task('scripts', function() {
 		// Minify
 		// .pipe(uglify())
 		.pipe(livereload())
+		.pipe(connect.reload())
 		.pipe(notify({ message: 'Scripts tasks completed!'} ) );
 });
+
+gulp.task('html', function() {
+	return gulp.src(ex + '*.html')
+		.pipe(connect.reload());
+		.pipe(notify({ message: 'Server up on 8080' }));
+})
+
+gulp.task('connect', function() {
+	connect.server({
+		root: ex,
+		livereload: true
+	});
+})
 
 gulp.task('watch', function() {
 	var server = livereload();
@@ -40,8 +54,11 @@ gulp.task('watch', function() {
 	// Run the scripts task
 	gulp.run('scripts');
 
+	//
+	gulp.run('connect');
+
 	// Watch for file changes
-	gulp.watch(src + '*.js', ['scripts'];
+	gulp.watch(src + '*.js', ['scripts']);
 	gulp.watch(ex + 'index.html')
 		.on('change', function(file) {
 			server.changed(file.path);
