@@ -1,7 +1,17 @@
 angular-flash
 =============
 
+Some requirements include:
+
+- npm
+- nodejs
+- growl (windows users)
+
+To test:
+
 ```
-npm install -g grunt-cli
 npm install -g bower
-grunt 
+
+## on the root directory
+npm install
+````
