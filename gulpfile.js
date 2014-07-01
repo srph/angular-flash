@@ -33,6 +33,7 @@ gulp.task('scripts', function() {
 });
 
 gulp.task('watch', function() {
+	var server = livereload();
 	// Run the install task which installs Bower components
 	gulp.run('install');
 
@@ -43,6 +44,6 @@ gulp.task('watch', function() {
 	gulp.watch(src + '*.js', ['scripts'];
 	gulp.watch(ex + 'index.html')
 		.on('change', function(file) {
-			file.change()
+			server.changed(file.path);
 		});
 });
