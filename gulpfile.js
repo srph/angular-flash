@@ -38,6 +38,7 @@ gulp.task('scripts', function() {
 gulp.task('html', function() {
 	return gulp.src(ex + '*.html')
 		.pipe(livereload())
+		.pipe(connect.reload())
 		.pipe(notify({ message: 'Server up on 8080' }));
 });
 
@@ -64,7 +65,5 @@ gulp.task('watch', function() {
 	// Watch for file changes
 	gulp.watch(src + '*.js', ['scripts']);
 	gulp.watch(ex + 'index.html')
-		.on('change', function(file) {
-			server.changed(file.path);
-		});
+		.on('change', server.changed);
 });
