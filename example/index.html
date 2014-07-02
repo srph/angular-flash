@@ -13,23 +13,24 @@
 	</div>
 
 	<script type="text/javascript" src="components/angular/angular.js"></script>
+	<script type="text/javascript" src="modules/angular-flash.js"></script>
 
 	<script type="text/javascript">
 		var app = angular.module('app', ['angular-flash']);
 
 		app.config([
-			'$rootScope',
 			'$flashProvider',
-			function($rootScope, $flashProvider) {
-				$flashProvider
-					.register('error', 'alert alert-danger')
-					.register('success', 'alert alert-success')
-					.register('info', 'alert alert-info')
-					.register('warning', 'alert alert-warning');
+			function($flashProvider) {
+				// console.log($flashProvider);
+				// $flashProvider
+				// 	.register('error', 'alert alert-danger');
+				// 	.register('success', 'alert alert-success')
+				// 	.register('info', 'alert alert-info')
+				// 	.register('warning', 'alert alert-warning');
 			}
 		]);
 
-		app.controller([
+		app.controller('ExCtrl', [
 			'$scope',
 			'$flash',
 			function($scope, $flash) {

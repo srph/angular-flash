@@ -12,6 +12,9 @@ var
 	concat		= require('gulp-concat'),
 	uglify		= require('gulp-uglify');
 
+var express 	= require('express'),
+	app 		= express();
+
 // Install Bower components
 gulp.task('install', function() {
 	// Locate the source file then run the install function
@@ -29,22 +32,23 @@ gulp.task('scripts', function() {
 		// Minify
 		// .pipe(uglify())
 		.pipe(livereload())
-		.pipe(connect.reload())
 		.pipe(notify({ message: 'Scripts tasks completed!'} ) );
 });
 
 gulp.task('html', function() {
 	return gulp.src(ex + '*.html')
-		.pipe(connect.reload());
+		.pipe(livereload())
 		.pipe(notify({ message: 'Server up on 8080' }));
-})
+});
 
 gulp.task('connect', function() {
-	connect.server({
-		root: ex,
-		livereload: true
+	app.use(express.static(__dirname + '/example'));
+	app.use(express.static(__dirname + '/bower_components'));
+	app.use(express.static(__dirname + '/dist'));
+	var server = app.listen(8080, function() {
+		console.log('Listening on port %d', server.address().port);
 	});
-})
+});
 
 gulp.task('watch', function() {
 	var server = livereload();

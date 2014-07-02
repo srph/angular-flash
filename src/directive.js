@@ -30,12 +30,12 @@ app.directive('flash', [
 		}];
 
 		return {
-			restrict:'AE'
+			restrict:'AE',
 			transclude: true,
 			template:
 				'<div ng-transclude>' +
 					'<div ng-repeat="item in list" class="{{ item.type }}" style="position: fixed;">' +
-						'<p> {{ item.message }} </p>'
+						'<p> {{ item.message }} </p>' +
 					'</div>' +
 				'</div>',
 			controller: controller

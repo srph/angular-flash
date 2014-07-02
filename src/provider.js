@@ -1,119 +1,122 @@
-app.provider('$flash', [
-	function() {
-		var flash = {};
+(function() {
+	'use strict';
 
-		/**
-		 * Lifetime of each flash
-		 *
-		 * @var 	int
-		 */
-		flash._lifetime = 5000;
+	var flash = {};
 
-		/**
-		 * List of registered names
-		 *
-		 * @var array
-		 */
-		flash._registry = [],
+	/**
+	 * Lifetime of each flash
+	 *
+	 * @var 	int
+	 */
+	flash._lifetime = 5000;
 
-		/**
-		 * Checks if the passed type is already in the registry
-		 *
-		 * @param 	string 		name
-		 * @return 	boolean
-		 */
-		flash._isInRegistry= function(type) {
-			return this._registry.indexOf(type) == -1;
-		}
+	/**
+	 * List of registered names
+	 *
+	 * @var array
+	 */
+	flash._registry = [],
 
-		/**
-		 * A get or setter for the lifetime of each flash
-		 *
-		 * @param 	int 	ms
-		 * @return 	int
-		 */
-		flash.lifetime = function(ms) {
-			var life = this._lifetime = this._lifetime || ms;
-			return life;
-		}
+	/**
+	 * Checks if the passed type is already in the registry
+	 *
+	 * @param 	string 		name
+	 * @return 	boolean
+	 */
+	flash._isInRegistry= function(type) {
+		return this._registry.indexOf(type) == -1;
+	}
 
-		/**
-		 * Registers the name with its respective class to
-		 * the service registry
-		 *
-		 * @param 	object|array 	data	Data?
-		 * @return 	this
-		 */
-		flash.register = function(data) {
+	/**
+	 * A get or setter for the lifetime of each flash
+	 *
+	 * @param 	int 	ms
+	 * @return 	int
+	 */
+	flash.lifetime = function(ms) {
+		var life = this._lifetime = this._lifetime || ms;
+		return life;
+	}
 
-			if ( data instanceof Array ) {
-				// Recursion when the passed argument is an
-				// array of objects
-				angular.forEach(data, function(value, key) {
-					this.register(key);
-				}, this);
+	/**
+	 * Registers the name with its respective class to
+	 * the service registry
+	 *
+	 * @param 	object|array 	data	Data?
+	 * @return 	this
+	 */
+	flash.register = function(data) {
 
-			} else if ( typeof data === "object") {
+		if ( data instanceof Array ) {
+			// Recursion when the passed argument is an
+			// array of objects
+			angular.forEach(data, function(value, key) {
+				this.register(key);
+			}, this);
 
-				// If the given name has already been registered
-				// in the registry, cancel operations and return an error
-				if ( this._isInRegistry(data.name) ) {
-					return console.error('Given name is already in the registry');
-				}
+		} else if ( typeof data === "object") {
 
-				// Push the data to the registry
-				this._registry.push(data);
-
-			} else {
-				return console.error('Data is not an object!');
+			// If the given name has already been registered
+			// in the registry, cancel operations and return an error
+			if ( this._isInRegistry(data.name) ) {
+				return console.error('Given name is already in the registry');
 			}
 
-			// Return the object for method chaining
-			return this;
-		};
+			// Push the data to the registry
+			this._registry.push(data);
 
-		/**
-		 * List of messages being shown
-		 *
-		 * @var array
-		 */
-		flash._list = [];
+		} else {
+			return console.error('Data is not an object!');
+		}
 
-		/**
-		 * Flash the message right now
-		 *
-		 * @param 	object 	data
-		 * @return 	this
-		 */
-		flash.fire = function(data) {
-			if ( data instanceof Array )  {
-				// Recursion when the passed argument is an
-				// array of objects
-				angular.forEach(data, function(value, key) {
-					this.register(key);
-				}, this);
-			} else if ( typeof data === "object" ) {
-				if ( ! this._isInRegistry(name) ) {
-					return console.error('Given name is not in the registry!');
-				}
+	// Return the object for method chaining
+		return this;
+	};
 
-				// Push the flash to the list
-				this._list.push(data);
+	/**
+	 * List of messages being shown
+	 *
+	 * @var array
+	 */
+	flash._list = [];
 
-				// Emit
-				$rootScope.$emit('$flashFired');
-			} else {
-				return console.error('Not an object nor an array');
+	/**
+	 * Flash the message right now
+	 *
+	 * @param 	object 	data
+	 * @return 	this
+	 */
+	flash.fire = function(data) {
+		if ( data instanceof Array )  {
+			// Recursion when the passed argument is an
+			// array of objects
+			angular.forEach(data, function(value, key) {
+				this.register(key);
+			}, this);
+		} else if ( typeof data === "object" ) {
+			if ( ! this._isInRegistry(name) ) {
+				return console.error('Given name is not in the registry!');
 			}
 
-			return this;
-		};
+			// Push the flash to the list
+			this._list.push(data);
 
+			// Emit
+			$rootScope.$emit('$flashFired');
+		} else {
+			return console.error('Not an object nor an array');
+		}
+
+		return this;
+	};
+
+
+	app.provider('$flash', function() {
 		this.$get = [
 			'$rootScope',
 			function($rootScope) {
 				return flash;
 			}
 		];
-	}
-]);
+	});
+})();
