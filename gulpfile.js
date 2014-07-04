@@ -10,6 +10,7 @@ var
 	install		= require('gulp-install'),
 	connect		= require('gulp-connect'),
 	concat		= require('gulp-concat'),
+	rename 		= require('gulp-rename'),
 	uglify		= require('gulp-uglify');
 
 var express 	= require('express'),
@@ -19,7 +20,8 @@ var express 	= require('express'),
 gulp.task('install', function() {
 	// Locate the source file then run the install function
 	return gulp.src(['./bower.json'])
-		.pipe(install());
+		.pipe(install())
+		.pipe(notify({ message: 'Scripts installed!' }));
 });
 
 gulp.task('scripts', function() {
@@ -29,20 +31,21 @@ gulp.task('scripts', function() {
 		// then move the concatenated file to the dist/ folder
 		.pipe(concat('angular-flash.js'))
 		.pipe(gulp.dest(dist))
-		// Minify
-		// .pipe(uglify())
 		.pipe(livereload())
-		.pipe(notify({ message: 'Scripts tasks completed!'} ) );
+		.pipe(notify({ message: 'Scripts tasks completed!' }));
 });
 
-gulp.task('html', function() {
-	return gulp.src(ex + '*.html')
+// Uglifies the main script
+gulp.task('uglify', function() {
+	return gulp.src(dist + 'angular-flash.js')
+		.pipe(uglify({ mangle: false }))
+		.pipe(rename('angular-flash.min.js'))
+		.pipe(gulp.dest(dist))
 		.pipe(livereload())
-		.pipe(connect.reload())
-		.pipe(notify({ message: 'Server up on 8080' }));
+		.pipe(notify({ message: 'Uglified your ugly script!' }));
 });
 
-gulp.task('connect', function() {
+gulp.task('server', function() {
 	app.use(express.static(__dirname + '/example'));
 	var server = app.listen(8080, function() {
 		console.log('Listening on port %d', server.address().port);
@@ -51,17 +54,21 @@ gulp.task('connect', function() {
 
 gulp.task('watch', function() {
 	var server = livereload();
+
 	// Run the install task which installs Bower components
 	gulp.run('install');
 
-	// Run the scripts task
+	// Run the scripts task, then uglify
 	gulp.run('scripts');
+	gulp.run('uglify');
 
-	//
-	gulp.run('connect');
+	// Run the server
+	gulp.run('server');
 
 	// Watch for file changes
-	gulp.watch(src + '*.js', ['scripts']);
+	gulp.watch(src + '*.js', ['scripts', 'uglify']);
 	gulp.watch(ex + 'index.html')
-		.on('change', server.changed);
+		.on('change', function(file) {
+			server.changed(file);
+		});
 });
