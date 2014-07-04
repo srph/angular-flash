@@ -1,47 +1,62 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="app">
+<html lang="en">
 <head>
 	<title> Flash Example </title>
 	<meta charset="utf-8">
+	<style>
+		.alert {
+			background: red
+		}
+	</style>
 </head>
 
 <body>
 	<flash></flash>
 
 	<div ng-controller="ExCtrl">
-		<button type="button" ng-click="flash('Oh shet')"> Flash </button>
+		<button type="button" ng-click="flash()"> Flash </button>
 	</div>
 
 	<script type="text/javascript" src="components/angular/angular.js"></script>
 	<script type="text/javascript" src="modules/angular-flash.js"></script>
 
 	<script type="text/javascript">
-		var app = angular.module('app', ['angular-flash']);
 
-		app.config([
-			'$flashProvider',
-			function($flashProvider) {
-				// console.log($flashProvider);
-				// $flashProvider
-				// 	.register('error', 'alert alert-danger');
-				// 	.register('success', 'alert alert-success')
-				// 	.register('info', 'alert alert-info')
-				// 	.register('warning', 'alert alert-warning');
-			}
-		]);
+			var app = angular.module('app', ['angular-flash']);
 
-		app.controller('ExCtrl', [
-			'$scope',
-			'$flash',
-			function($scope, $flash) {
-				$scope.flash = function(message) {
-					var random = (Math.random * 10) + 0;
-					var haystack = $flash.registry;
-					var needle = haystack[random];
-					$flash.fire({ type: needle.type, message: needle.message });
+			app.config([
+				'$flashProvider',
+				function($flashProvider) {
+					// console.log($flashProvider);
+					$flashProvider
+						.register({ 'type': 'error', 'class': 'alert alert-danger'})
+						.register({ 'type': 'success', 'class': 'alert alert-success'})
+						.register({ 'type': 'info', 'class': 'alert alert-info'})
+						.register({ 'type': 'warning', 'class': 'alert alert-warning'});
 				}
+			]);
+
+			app.controller('ExCtrl', [
+				'$scope',
+				'$flash',
+				function($scope, $flash) {
+					$scope.flash = function() {
+						var random = (Math.random * 4) + 0;
+						var haystack = ['error', 'success', 'info', 'warning']
+						var needle = haystack[random];
+						$flash.fire({ 'type': 'success', 'message': 'Yolo' });
+					}
+				}
+			]);
+
+		angular.element(document).ready(function() {
+			console.log('Application is starting..');
+			try {
+				angular.bootstrap(document, ['app']);
+			} catch(e) {
+				console.log(e);
 			}
-		]);
+		});
 	</script>
 </body>
 </html>

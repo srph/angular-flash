@@ -1,32 +1,18 @@
 var app = angular.module('angular-flash', []);
-(function() {
-	'use strict';
-
-	var flash = {};
-
+app.provider('$flash', [function() {
 	/**
 	 * Lifetime of each flash
 	 *
 	 * @var 	int
 	 */
-	flash._lifetime = 5000;
+	this._lifetime = 2000;
 
 	/**
 	 * List of registered names
 	 *
 	 * @var array
 	 */
-	flash._registry = [],
-
-	/**
-	 * Checks if the passed type is already in the registry
-	 *
-	 * @param 	string 		name
-	 * @return 	boolean
-	 */
-	flash._isInRegistry= function(type) {
-		return this._registry.indexOf(type) == -1;
-	}
+	this._registry = [];
 
 	/**
 	 * A get or setter for the lifetime of each flash
@@ -34,9 +20,20 @@ var app = angular.module('angular-flash', []);
 	 * @param 	int 	ms
 	 * @return 	int
 	 */
-	flash.lifetime = function(ms) {
-		var life = this._lifetime = this._lifetime || ms;
-		return life;
+	this.lifetime = function(ms) {
+		if ( ms !== undefined ) this._liftime = ms;
+		return this._lifetime;
+	}
+
+	/**
+	 * Checks if the passed type is already in the registry
+	 *
+	 * @param 	string 		name
+	 * @return 	boolean
+	 */
+	this.isInRegistry = function(type) {
+		return !(this._registry.map(function(cur) { return cur.type }).indexOf(type) == -1);
+		return result;
 	}
 
 	/**
@@ -46,122 +43,131 @@ var app = angular.module('angular-flash', []);
 	 * @param 	object|array 	data	Data?
 	 * @return 	this
 	 */
-	flash.register = function(data) {
-
+	this.register = function(data) {
 		if ( data instanceof Array ) {
 			// Recursion when the passed argument is an
 			// array of objects
 			angular.forEach(data, function(value, key) {
-				this.register(key);
-			}, this);
-
+				this.register(value);
+			}, _this);
 		} else if ( typeof data === "object") {
-
 			// If the given name has already been registered
 			// in the registry, cancel operations and return an error
-			if ( this._isInRegistry(data.name) ) {
+			if ( this.isInRegistry(data.type) ) {
 				return console.error('Given name is already in the registry');
 			}
 
 			// Push the data to the registry
 			this._registry.push(data);
-
 		} else {
 			return console.error('Data is not an object!');
 		}
 
-	// Return the object for method chaining
+		// Return the object for method chaining
 		return this;
-	};
+	}
 
-	/**
-	 * List of messages being shown
-	 *
-	 * @var array
-	 */
-	flash._list = [];
+	var _this = this;
 
-	/**
-	 * Flash the message right now
-	 *
-	 * @param 	object 	data
-	 * @return 	this
-	 */
-	flash.fire = function(data) {
-		if ( data instanceof Array )  {
-			// Recursion when the passed argument is an
-			// array of objects
-			angular.forEach(data, function(value, key) {
-				this.register(key);
-			}, this);
-		} else if ( typeof data === "object" ) {
-			if ( ! this._isInRegistry(name) ) {
-				return console.error('Given name is not in the registry!');
-			}
+	this.$get = [
+		'$rootScope',
+		function($rootScope) {
+			var flash = {};
 
-			// Push the flash to the list
-			this._list.push(data);
+			/**
+			 * List of messages being shown
+			 *
+			 * @var array
+			 */
+			flash._list = [];
 
-			// Emit
-			$rootScope.$emit('$flashFired');
-		} else {
-			return console.error('Not an object nor an array');
-		}
+			/**
+			 * Get the set lifetime of each flash
+			 *
+			 * @var int
+			 */
+			flash.lifetime = function(ms) {
+				return _this.lifetime(ms)
+			};
 
-		return this;
-	};
+			/**
+			 * Flash the message right now
+			 *
+			 * @param 	object 	data
+			 * @return 	this
+			 */
+			flash.fire = function(data) {
+				if ( data instanceof Array )  {
+					// Recursion when the passed argument is an
+					// array of objects
+					angular.forEach(data, function(value, key) {
+						this.register(value);
+					}, _this);
+				} else if ( typeof data === "object" ) {
 
-
-	app.provider('$flash', function() {
-		this.$get = [
-			'$rootScope',
-			function($rootScope) {
-				return flash;
-			}
-		];
-	});
-})();
-app.directive('flash', [
-	function() {
-		var controller = [
-			'$scope',
-			'$rootScope',
-			'$flash',
-			function($scope, $rootScope, $flash) {
-				$scope.list = [];
-				// Removes the first one in the list every 5 seconds
-				// until none remains
-				var shift = function() {
-					// An infinite loop broken only when none remains
-					while(true) {
-						if ( ! FlashService.list.count ) break;
-
-						$timeout(function() {
-							FlashService.list.shift();
-							$scope.list = FlashService.list;
-							$rootScope.$on('$flashFiredRemoved');
-						}, FlashService.lifetime, true);
+					if ( ! _this.isInRegistry(data.type) ) {
+						return console.error('Given name is not in the registry!');
 					}
 
-					return;
+					// Push the flash to the list
+					this._list.push(data);
+
+					// Emit
+					$rootScope.$emit('$flashFired');
+				} else {
+					return console.error('Not an object nor an array');
 				}
 
-				$rootScope.$on('$flashFired', function() {
-					// Let the removal of every 0-index in the array begin
-					shift();
-				});
-		}];
+				return this;
+			}
 
-		return {
-			restrict:'AE',
-			transclude: true,
-			template:
-				'<div ng-transclude>' +
-					'<div ng-repeat="item in list" class="{{ item.type }}" style="position: fixed;">' +
-						'<p> {{ item.message }} </p>' +
-					'</div>' +
-				'</div>',
-			controller: controller
+			return flash;
 		}
+	];
+}]);
+app.directive('flash', [function() {
+	var controller = function($scope, $rootScope, $timeout, $flash) {
+		// Removes the first one in the list every 5 seconds
+		// until none remains
+		var shift = function() {
+			console.log('Shifting!');
+			// An infinite loop broken only when none remains
+			while($scope.list.length >= 1) {
+				console.log('Attempting!');
+				$timeout(function() {
+					$flash._list.shift();
+					$scope.list = $flash._list;
+					$rootScope.$emit('$flashFiredRemoved');
+					console.log($scope.list);
+				}, $flash.lifetime(), true);
+			}
+
+			return;
+		}
+
+		$rootScope.$on('$flashFired', function() {
+			console.log('Fired!');
+			$scope.list = $flash._list;
+			console.log($scope.list.length);
+			// Let the removal of every 0-index in the array begin
+			shift();
+		});
+	};
+
+		
+	return {
+		restrict:'AE',
+		transclude: true,
+		template:
+			'<div ng-repeat="item in list" class="{{ item.type }}" style="position: fixed;">' +
+			'<p> {{ item.message }} </p>' +
+			'</div>' ,
+		controller: [
+			'$scope',
+			'$rootScope',
+			'$timeout',
+			'$flash',
+			controller
+		]
 	}
-]);
+} ]);

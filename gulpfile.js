@@ -24,7 +24,7 @@ gulp.task('install', function() {
 
 gulp.task('scripts', function() {
 	// Locate all js files in the src folder
-	return gulp.src([src + 'module.js', src + 'provider.js', src + 'directive.js',])
+	return gulp.src([src + 'module.js', src + 'provider.js', src + 'directive.js'])
 		// Concatenate all files to a single one,
 		// then move the concatenated file to the dist/ folder
 		.pipe(concat('angular-flash.js'))
