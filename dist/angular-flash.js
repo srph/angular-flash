@@ -126,23 +126,16 @@ app.provider('$flash', [function() {
 	];
 }]);
 app.directive('flash', [function() {
+
 	var controller = function($scope, $rootScope, $timeout, $flash) {
 		// Removes the first one in the list every 5 seconds
 		// until none remains
 		var shift = function() {
-			console.log('Shifting!');
-			// An infinite loop broken only when none remains
-			while($scope.list.length >= 1) {
-				console.log('Attempting!');
-				$timeout(function() {
-					$flash._list.shift();
-					$scope.list = $flash._list;
-					$rootScope.$emit('$flashFiredRemoved');
-					console.log($scope.list);
-				}, $flash.lifetime(), true);
-			}
-
-			return;
+			$timeout(function() {
+				$flash._list.shift();
+				$scope.list = $flash._list;
+				$rootScope.$emit('$flashFiredRemoved');
+			}, $flash.lifetime(), true);
 		}
 
 		$rootScope.$on('$flashFired', function() {
@@ -154,14 +147,19 @@ app.directive('flash', [function() {
 		});
 	};
 
+	// Directive template
+	var template =
+		'<div id="ng-notification-flash-container" style="position: fixed; left: 0; right: 0;">' +
+			'<div id="ng-notification-flash-inner" ng-repeat="item in list" class="{{ item.type }}" style="display: block; background: red;">' +
+				'<p> {{ item.message }} </p>' +
+			'</div>' +
+		'</div>';
+
 		
 	return {
 		restrict:'AE',
 		transclude: true,
-		template:
-			'<div ng-repeat="item in list" class="{{ item.type }}" style="position: fixed;">' +
-			'<p> {{ item.message }} </p>' +
-			'</div>' ,
+		template: template,
 		controller: [
 			'$scope',
 			'$rootScope',

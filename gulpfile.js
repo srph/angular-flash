@@ -44,8 +44,6 @@ gulp.task('html', function() {
 
 gulp.task('connect', function() {
 	app.use(express.static(__dirname + '/example'));
-	app.use(express.static(__dirname + '/bower_components'));
-	app.use(express.static(__dirname + '/dist'));
 	var server = app.listen(8080, function() {
 		console.log('Listening on port %d', server.address().port);
 	});
