@@ -66,7 +66,7 @@ app.config([
 			]);
 	}
 ]);
-```provider.
+```
 
 ** Flashing it to the DOM **. This is pretty easy by simply using the ```fire()``` function included in the $flash provider.
 
@@ -81,39 +81,46 @@ Markup:
 Script:
 
 ```
-	app.controller('HelloWorldCtrl', [
-		'$scope', 
-		'$flash',
-		function($scope, $flash) {
-			$scope.fire = function() {
-				flash.fire({ type: 'success', message: 'Hello World!' });
-			}
+app.controller('HelloWorldCtrl', [
+	'$scope', 
+	'$flash',
+	function($scope, $flash) {
+		$scope.fire = function() {
+			flash.fire({ type: 'success', message: 'Hello World!' });
 		}
-	]);
+	}
+]);
 ```
-
 
 To use the included example:
 
-Some requirements include,
+Some requirements include:
 
 - npm
 - nodejs
 - growl (windows users)
 
-To test:
+To test (on the root directory):
 
 ```
 npm install -g bower
 npm install -g gulp
-
-## on the root directory
 npm install
-````
+```
 
 ## Screenies ##
 
 Currently unavailable
+
+## To do ##
+
+- [ ] Write tests
+- [ ] Persistence
+- [ ] 'event' ng-click each notification in the list
+- [ ] Custom templates
+- [ ] ng-animate
+
+For more updates, do check the [Trello] (https://trello.com/b/5soqLral/ng-flash)
 
 ## Changelog ##
 
