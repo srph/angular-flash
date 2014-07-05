@@ -3,6 +3,8 @@ angular-flash
 
 An AngularJS module that allows you to flash a notification to the DOM.
 
+The primary reason that this was created was due to other modules, although superior in terms of usability and stability, lacks documentation which makes it difficult for others to help, maintain, and improve the tool.
+
 ## Installation
 
 ** Coming soon to Bower. **
