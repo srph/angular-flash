@@ -108,6 +108,8 @@ To test (on the root directory):
 npm install -g bower
 npm install -g gulp
 npm install
+
+gulp
 ```
 
 ## Screenies ##

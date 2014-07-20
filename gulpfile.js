@@ -52,7 +52,7 @@ gulp.task('server', function() {
 	});
 });
 
-gulp.task('watch', function() {
+gulp.task('default', function() {
 	var server = livereload();
 
 	// Run the install task which installs Bower components
