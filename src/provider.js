@@ -11,7 +11,32 @@ app.provider('$flash', [function() {
 	 *
 	 * @var array
 	 */
-	this._registry = [];
+	this._registry = this.bootstrap;
+
+	/**
+	 * Bootstrap configuration
+	 */
+	this.bootstrap = [
+		{
+			'type': 'success',
+			'class': 'alert alert-success',
+		},
+
+		{
+			'type': 'info',
+			'class': 'alert alert-info',
+		},
+
+		{
+			'type': 'warning',
+			'class': 'alert alert-warning',
+		},
+
+		{
+			'type': 'danger',
+			'class': 'alert alert-danger',
+		},
+	];
 
 	/**
 	 * A get or setter for the lifetime of each flash
@@ -21,6 +46,7 @@ app.provider('$flash', [function() {
 	 */
 	this.lifetime = function(ms) {
 		if ( ms !== undefined ) this._liftime = ms;
+
 		return this._lifetime;
 	}
 
@@ -31,8 +57,14 @@ app.provider('$flash', [function() {
 	 * @return 	boolean
 	 */
 	this.isInRegistry = function(type) {
-		return !(this._registry.map(function(cur) { return cur.type }).indexOf(type) == -1);
-		return result;
+		// Stores the fetched index of the given type
+		var index = this._registry.map(function(cur) { return cur.type }).indexOf(type);
+
+		// Returns the position if the value of the index is -1 (see indexOf).
+		// Otherwise, a false
+		return !( index == -1 )
+			? index
+			: false;
 	}
 
 	/**
@@ -52,20 +84,31 @@ app.provider('$flash', [function() {
 		} else if ( typeof data === "object") {
 			// If the given name has already been registered
 			// in the registry, cancel operations and return an error
-			if ( this.isInRegistry(data.type) ) {
-				return console.error('Given name is already in the registry');
+			if ( var position = this.isInRegistry(data.type) ) {
+				// return console.error('Given name is already in the registry');
+				this.overwrite(position, data);
 			}
 
 			// Push the data to the registry
 			this._registry.push(data);
 		} else {
-			return console.error('Data is not an object!');
+			return new Error('Registered data is not an object!');
 		}
 
 		// Return the object for method chaining
 		return this;
 	}
 
+	/**
+	 * Overwrites an existing data on the given position
+	 *
+	 */
+	this.overwrite = function(position, data)
+	{
+		this._registry[position] = data;
+	}
+
+	// Reference to our this
 	var _this = this;
 
 	this.$get = [
@@ -100,7 +143,7 @@ app.provider('$flash', [function() {
 					// Recursion when the passed argument is an
 					// array of objects
 					angular.forEach(data, function(value, key) {
-						this.register(value);
+						this.fire(value);
 					}, _this);
 				} else if ( typeof data === "object" ) {
 
@@ -118,7 +161,17 @@ app.provider('$flash', [function() {
 				}
 
 				return this;
-			}
+			};
+
+			/**
+			 * Removes everything in the list
+			 *
+			 * @return 	{void}
+			 */
+			flash.clean = function()
+			{
+				flash._list = [];
+			};
 
 			return flash;
 		}
