@@ -3,18 +3,22 @@
 <head>
 	<title> Flash Example </title>
 	<meta charset="utf-8">
+	<link href="components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" type="text/css">
+	<link href="modules/angular-flash.css" rel="stylesheet" type="text/css">
 	<style>
 		.alert {
-			background: red
+			width: 250px;
+			cursor: pointer;
 		}
 	</style>
 </head>
 
 <body>
 	<flash></flash>
+	<h1> Flash Example </h1>
 
-	<div ng-controller="ExCtrl">
-		<button type="button" ng-click="flash()"> Flash </button>
+	<div ng-controller="ExCtrl" style="margin-top: 250px; margin-left: auto; margin-right: auto; width: 550px">
+		<button type="button" ng-click="flash()" class="btn btn-primary"> Flash </button>
 	</div>
 
 	<script type="text/javascript" src="components/angular/angular.js"></script>
@@ -28,11 +32,11 @@
 				'$flashProvider',
 				function($flashProvider) {
 					// console.log($flashProvider);
-					$flashProvider
-						.register({ 'type': 'error', 'class': 'alert alert-danger'})
-						.register({ 'type': 'success', 'class': 'alert alert-success'})
-						.register({ 'type': 'info', 'class': 'alert alert-info'})
-						.register({ 'type': 'warning', 'class': 'alert alert-warning'});
+					// $flashProvider
+					// 	.register({ 'type': 'error', 'class': 'alert alert-danger'})
+					// 	.register({ 'type': 'success', 'class': 'alert alert-success'})
+					// 	.register({ 'type': 'info', 'class': 'alert alert-info'})
+					// 	.register({ 'type': 'warning', 'class': 'alert alert-warning'});
 				}
 			]);
 
@@ -41,10 +45,10 @@
 				'$flash',
 				function($scope, $flash) {
 					$scope.flash = function() {
-						var random = (Math.random * 4) + 0;
-						var haystack = ['error', 'success', 'info', 'warning']
-						var needle = haystack[random];
-						$flash.fire({ 'type': 'success', 'message': 'Yolo' });
+						var random = Math.ceil(Math.random() * (3) + 0);
+						var types = ['danger', 'success', 'info', 'warning'];
+						var message = ['Currently processing your request...', 'Yes, milord!', 'Justice is ours.', 'I came in like a wrecking ball!'];
+						$flash.fire({ 'type': types[random], 'message':  message[random] });
 					}
 				}
 			]);

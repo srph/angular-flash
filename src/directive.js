@@ -5,16 +5,23 @@ app.directive('flash', [function() {
 		// until none remains
 		var shift = function() {
 			$timeout(function() {
-				$flash._list.shift();
-				$scope.list = $flash._list;
-				$rootScope.$emit('$flashFiredRemoved');
+				$flash.shift();
+				$scope.list = $flash.list();
 			}, $flash.lifetime(), true);
 		}
 
+		/**
+		 * Close the clicked item
+		 *
+		 * @param 	{int} 	pos
+		 * @return 	{void}
+		 */
+		$scope.close = function(pos) {
+			$flash.remove(pos);
+		}
+
 		$rootScope.$on('$flashFired', function() {
-			console.log('Fired!');
-			$scope.list = $flash._list;
-			console.log($scope.list.length);
+			$scope.list = $flash.list();
 			// Let the removal of every 0-index in the array begin
 			shift();
 		});
@@ -22,8 +29,9 @@ app.directive('flash', [function() {
 
 	// Directive template
 	var template =
-		'<div id="ng-notification-flash-container" style="position: fixed; left: 0; right: 0;">' +
-			'<div id="ng-notification-flash-inner" ng-repeat="item in list" class="{{ item.type }}" style="display: block; background: red;">' +
+		'<div class="ng-notification-flash-container">' +
+			'<div ng-repeat="item in list" ng-click="close($index)"' +
+			'class="ng-notification-flash-inner {{ item.class }}">' +
 				'<p> {{ item.message }} </p>' +
 			'</div>' +
 		'</div>';

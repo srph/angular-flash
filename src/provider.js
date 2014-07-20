@@ -4,14 +4,7 @@ app.provider('$flash', [function() {
 	 *
 	 * @var 	int
 	 */
-	this._lifetime = 2000;
-
-	/**
-	 * List of registered names
-	 *
-	 * @var array
-	 */
-	this._registry = this.bootstrap;
+	this._lifetime = 10000;
 
 	/**
 	 * Bootstrap configuration
@@ -19,24 +12,31 @@ app.provider('$flash', [function() {
 	this.bootstrap = [
 		{
 			'type': 'success',
-			'class': 'alert alert-success',
+			'class': 'alert alert-success'
 		},
 
 		{
 			'type': 'info',
-			'class': 'alert alert-info',
+			'class': 'alert alert-info'
 		},
 
 		{
 			'type': 'warning',
-			'class': 'alert alert-warning',
+			'class': 'alert alert-warning'
 		},
 
 		{
 			'type': 'danger',
-			'class': 'alert alert-danger',
-		},
-	];
+			'class': 'alert alert-danger'
+		}
+	];	
+
+	/**
+	 * List of registered names
+	 *
+	 * @var array
+	 */
+	this._registry = this.bootstrap;
 
 	/**
 	 * A get or setter for the lifetime of each flash
@@ -51,12 +51,12 @@ app.provider('$flash', [function() {
 	}
 
 	/**
-	 * Checks if the passed type is already in the registry
+	 * Returns the position of the type
 	 *
 	 * @param 	string 		name
-	 * @return 	boolean
+	 * @return 	int
 	 */
-	this.isInRegistry = function(type) {
+	this.getPositionOfType = function(type) {
 		// Stores the fetched index of the given type
 		var index = this._registry.map(function(cur) { return cur.type }).indexOf(type);
 
@@ -64,7 +64,36 @@ app.provider('$flash', [function() {
 		// Otherwise, a false
 		return !( index == -1 )
 			? index
-			: false;
+			: -1;
+	}
+
+	/**
+	 * Returns the data of the type
+	 * Almost an alias to the getPositionOfType function
+	 *
+	 * -1 = false
+	 * Otherwise, true
+	 *
+	 * @param 	{str} 	type
+	 * @return 	{int}
+	 */
+	this.getDataOfType = function(type) {
+		var index = this.getPositionOfType(type);
+
+		return (index == -1)
+			? index
+			: this._registry[index];
+	}
+
+	/**
+	 * Checks if the passed type is already in the registry.
+	 * Alias to the getPositionOfType function
+	 *
+	 * @param 	string 		name
+	 * @return 	int
+	 */
+	this.isInRegistry = function(type) {
+		return this.getPositionOfType(type);
 	}
 
 	/**
@@ -82,9 +111,10 @@ app.provider('$flash', [function() {
 				this.register(value);
 			}, _this);
 		} else if ( typeof data === "object") {
+			var position;
 			// If the given name has already been registered
 			// in the registry, cancel operations and return an error
-			if ( var position = this.isInRegistry(data.type) ) {
+			if ( position = this.isInRegistry(data.type) ) {
 				// return console.error('Given name is already in the registry');
 				this.overwrite(position, data);
 			}
@@ -92,7 +122,7 @@ app.provider('$flash', [function() {
 			// Push the data to the registry
 			this._registry.push(data);
 		} else {
-			return new Error('Registered data is not an object!');
+			throw new Error('Registered data is not an object!');
 		}
 
 		// Return the object for method chaining
@@ -147,9 +177,14 @@ app.provider('$flash', [function() {
 					}, _this);
 				} else if ( typeof data === "object" ) {
 
-					if ( ! _this.isInRegistry(data.type) ) {
-						return console.error('Given name is not in the registry!');
+					var position;
+
+					if ( ( position = _this.isInRegistry(data.type) ) == -1 ) {
+						throw new Error(data.type + ' is not in the registry!');
 					}
+
+					// Add the class of the provided type to the passed data
+					data.class = _this._registry[position].class;
 
 					// Push the flash to the list
 					this._list.push(data);
@@ -157,21 +192,59 @@ app.provider('$flash', [function() {
 					// Emit
 					$rootScope.$emit('$flashFired');
 				} else {
-					return console.error('Not an object nor an array');
+					throw new Error('Not an object nor an array');
 				}
 
 				return this;
 			};
 
 			/**
+			 * Removes a data in the given position of the list
+			 *
+			 * @param 	{int} 	pos
+			 * @return 	{void}
+			 */
+			flash.remove = function(pos) {
+				this._list.splice(pos, 1);
+
+				$rootScope.$emit('$flashFireRemoved');
+			}
+
+			/**
 			 * Removes everything in the list
 			 *
 			 * @return 	{void}
 			 */
-			flash.clean = function()
-			{
-				flash._list = [];
+			flash.clean = function() {
+				this._list = [];
 			};
+
+			/**
+			 * Shifts the list. This avoids direct shifting
+			 * of the list (also for encapsulation)
+			 *
+			 * @return 	{void}
+			 */
+			flash.shift = function() {
+				this._list.shift();
+
+				$rootScope.$emit('$flashFiredRemoved');
+			}
+
+			/**
+			 * A setter/getter for the _list variables (encapsulation)
+			 *
+			 * @return 	{array}
+			 */
+			flash.list = function(array) {
+				if ( angular.isDefined(array) ) {
+					if ( array instanceof Array ) {
+						this._list = array;
+					}
+				}
+
+				return this._list;
+			}
 
 			return flash;
 		}

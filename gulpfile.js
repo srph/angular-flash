@@ -27,8 +27,7 @@ gulp.task('install', function() {
 gulp.task('scripts', function() {
 	// Locate all js files in the src folder
 	return gulp.src([src + 'module.js', src + 'provider.js', src + 'directive.js'])
-		// Concatenate all files to a single one,
-		// then move the concatenated file to the dist/ folder
+		// Concatenate all file then move to the dist/ folder
 		.pipe(concat('angular-flash.js'))
 		.pipe(gulp.dest(dist))
 		.pipe(livereload())
@@ -37,10 +36,10 @@ gulp.task('scripts', function() {
 
 // Uglifies the main script
 gulp.task('uglify', function() {
-	return gulp.src(dist + 'angular-flash.js')
-		.pipe(uglify({ mangle: false }))
+	return gulp.src(dist + 'angular-flash.js', { base: './' })
+		// .pipe(uglify({ mangle: false }))
 		.pipe(rename('angular-flash.min.js'))
-		.pipe(gulp.dest(dist))
+		.pipe(gulp.dest('./'))
 		.pipe(livereload())
 		.pipe(notify({ message: 'Uglified your ugly script!' }));
 });
@@ -56,7 +55,7 @@ gulp.task('default', function() {
 	var server = livereload();
 
 	// Run the install task which installs Bower components
-	gulp.run('install');
+	// gulp.run('install');
 
 	// Run the scripts task, then uglify
 	gulp.run('scripts');
@@ -66,7 +65,8 @@ gulp.task('default', function() {
 	gulp.run('server');
 
 	// Watch for file changes
-	gulp.watch(src + '*.js', ['scripts', 'uglify']);
+	gulp.watch(src + '*.js', ['scripts']);
+	gulp.watch(dist + '*.js', ['uglify']);
 	gulp.watch(ex + 'index.html')
 		.on('change', function(file) {
 			server.changed(file);
