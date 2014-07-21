@@ -7,9 +7,9 @@ The primary reason that this was created was due to other modules, although supe
 
 ## Installation
 
-** Coming soon to Bower. **
+*Coming soon to Bower.*
 
-** Simply include the script in your page **
+Simply include the script in your page:
 
 ```
 <script type="text/javascript" src="/path/to/angular-flash.js"></script>
@@ -17,7 +17,7 @@ The primary reason that this was created was due to other modules, although supe
 
 ## Instructions ##
 
-** Put the directive next to your markup body **. 
+**Put the directive next to your markup body**. 
 
 ```
 <body>
@@ -27,11 +27,11 @@ The primary reason that this was created was due to other modules, although supe
 </body>
 ```
 
-** By default, ** we register the 4 basic types (info, sucess, error warning) with a respective Twitter Bootstrap alert class (alert alert-info, ...). **If you have no intentions of adding new types or overwriting the existing ones**, then do not bother with any of the configurations.
+**By default,** we register the 4 basic types (info, sucess, error warning) with a respective Twitter Bootstrap alert class (alert alert-info, ...). **If you have no intentions of adding new types or overwriting the existing ones**, then do not bother with any of the configurations.
 
-** Flashing it to the DOM **. This is pretty easy by simply using the ```fire()``` function included in the $flash provider.
+**Flashing it to the DOM**. This is pretty easy by simply using the ```fire()``` function included in the $flash provider.
 
-Markup:
+html:
 
 ```
 <head>
@@ -46,7 +46,7 @@ Markup:
 </body>
 ````
 
-Script:
+js:
 
 ```javascript
 app.controller('HelloWorldCtrl', [
@@ -54,7 +54,7 @@ app.controller('HelloWorldCtrl', [
 	'$flash',
 	function($scope, $flash) {
 		$scope.fire = function() {
-			flash.fire({ type: 'success', message: 'Hello World!' });
+			$flash.fire({ type: 'success', message: 'Hello World!' });
 		}
 	}
 ]);
@@ -73,9 +73,9 @@ app.config([
 ]);
 ```
 
-Yoy **may** also ** register your flash namespace with its respective class **. You may do this by injecting the $flashProvider during the configuration phase
+Yoy **may** also **register your custom flash type with its respective class**. You may do this by injecting the $flashProvider during the configuration phase, and using the ```register()``` fn.
 
-```
+```javascript
 app.config([
 	'$flashProvider',
 	function($flashProvider) {
@@ -144,7 +144,7 @@ Currently unavailable
 
 - [ ] Write tests
 - [ ] Persistence
-- [ ] 'event' ng-click each notification in the list
+- [x] 'event' ng-click each notification in the list
 - [ ] Custom templates
 - [ ] ng-animate
 
@@ -152,7 +152,7 @@ For more updates, do check the [Trello](https://trello.com/b/5soqLral/ng-flash)
 
 ## Changelog ##
 
-** v1.1 **
+**v1.1**
 - Fixed flash.fire function when passed an array of objects
 - Clean function
 - Updated README (added gulp task to run)
@@ -168,6 +168,5 @@ For more updates, do check the [Trello](https://trello.com/b/5soqLral/ng-flash)
 - Added CSS file
 - Updated instructions
 
-** v1.0 **
-
+**v1.0**
 - Module is finally working. Out of the alpha phase
