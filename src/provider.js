@@ -12,22 +12,22 @@ app.provider('$flash', [function() {
 	this.bootstrap = [
 		{
 			'type': 'success',
-			'class': 'alert alert-success'
+			'class': 'alert alert-success alert-dismissible'
 		},
 
 		{
 			'type': 'info',
-			'class': 'alert alert-info'
+			'class': 'alert alert-info alert-dismissible'
 		},
 
 		{
 			'type': 'warning',
-			'class': 'alert alert-warning'
+			'class': 'alert alert-warning alert-dismissible'
 		},
 
 		{
 			'type': 'danger',
-			'class': 'alert alert-danger'
+			'class': 'alert alert-danger alert-dismissible'
 		}
 	];	
 
@@ -45,7 +45,9 @@ app.provider('$flash', [function() {
 	 * @return 	int
 	 */
 	this.lifetime = function(ms) {
-		if ( ms !== undefined ) this._liftime = ms;
+		if ( angular.isDefined(ms) ) {
+			this._lifetime = ms;
+		}
 
 		return this._lifetime;
 	}
@@ -104,13 +106,13 @@ app.provider('$flash', [function() {
 	 * @return 	this
 	 */
 	this.register = function(data) {
-		if ( data instanceof Array ) {
+		if ( angular.isArray(data) ) {
 			// Recursion when the passed argument is an
 			// array of objects
 			angular.forEach(data, function(value, key) {
 				this.register(value);
 			}, _this);
-		} else if ( typeof data === "object") {
+		} else if ( angular.isObject(data) ) {
 			var position;
 			// If the given name has already been registered
 			// in the registry, cancel operations and return an error
@@ -158,8 +160,8 @@ app.provider('$flash', [function() {
 			 *
 			 * @var int
 			 */
-			flash.lifetime = function(ms) {
-				return _this.lifetime(ms)
+			flash.lifetime = function() {
+				return _this.lifetime()
 			};
 
 			/**
@@ -169,13 +171,13 @@ app.provider('$flash', [function() {
 			 * @return 	this
 			 */
 			flash.fire = function(data) {
-				if ( data instanceof Array )  {
+				if ( angular.isArray(data) )  {
 					// Recursion when the passed argument is an
 					// array of objects
 					angular.forEach(data, function(value, key) {
 						this.fire(value);
 					}, _this);
-				} else if ( typeof data === "object" ) {
+				} else if ( angular.isObject(data) ) {
 
 					var position;
 
@@ -216,7 +218,7 @@ app.provider('$flash', [function() {
 			 * @return 	{void}
 			 */
 			flash.clean = function() {
-				this._list = [];
+				this.list([]);
 			};
 
 			/**
@@ -236,11 +238,16 @@ app.provider('$flash', [function() {
 			 *
 			 * @return 	{array}
 			 */
-			flash.list = function(array) {
-				if ( angular.isDefined(array) ) {
-					if ( array instanceof Array ) {
-						this._list = array;
+			flash.list = function(newList) {
+				if ( angular.isDefined(newList) ) {
+					// If the passed argument is not an array,
+					// throw an exception
+					if ( ! angular.isArray(newList) ) {
+						throw new Error('New _list is not an array!');
 					}
+
+					// Assign the passed argument to _list
+					this._list = newList;
 				}
 
 				return this._list;

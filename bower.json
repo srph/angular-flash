@@ -1,6 +1,6 @@
 {
   "name": "angular-flash",
-  "version": "v1.1",
+  "version": "v0.1.1",
   "homepage": "https://github.com/srph/angular-flash",
   "authors": [
     "srph <seraphipod@gmail.com>"
@@ -11,12 +11,15 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "README.md",
+    ".gitignore",
   ],
   "dependencies": {
     "angular": "~1.2.18"
   },
   "devDependencies": {
-    "bootstrap": "~3.2.0"
+    "bootstrap": "~3.2.0",
+    "angular-animate": "~1.2.20"
   }
 }

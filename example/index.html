@@ -8,7 +8,6 @@
 	<style>
 		.alert {
 			width: 250px;
-			cursor: pointer;
 		}
 	</style>
 </head>
@@ -17,16 +16,17 @@
 	<flash></flash>
 	<h1> Flash Example </h1>
 
-	<div ng-controller="ExCtrl" style="margin-top: 250px; margin-left: auto; margin-right: auto; width: 550px">
+	<div ng-controller="ExCtrl">
 		<button type="button" ng-click="flash()" class="btn btn-primary"> Flash </button>
 	</div>
 
-	<script type="text/javascript" src="components/angular/angular.js"></script>
+	<script type="text/javascript" src="components/angular/angular.min.js"></script>
+	<script type="text/javascript" src="components/angular-animate/angular-animate.min.js"></script>
 	<script type="text/javascript" src="modules/angular-flash.js"></script>
 
 	<script type="text/javascript">
 
-			var app = angular.module('app', ['angular-flash']);
+			var app = angular.module('app', ['angular-flash', 'ngAnimate']);
 
 			app.config([
 				'$flashProvider',
@@ -37,6 +37,9 @@
 					// 	.register({ 'type': 'success', 'class': 'alert alert-success'})
 					// 	.register({ 'type': 'info', 'class': 'alert alert-info'})
 					// 	.register({ 'type': 'warning', 'class': 'alert alert-warning'});
+
+					// An example of lifetime being configured
+					$flashProvider.lifetime(5000);
 				}
 			]);
 

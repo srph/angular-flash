@@ -5,6 +5,8 @@ An AngularJS module that allows you to flash a notification to the DOM.
 
 The primary reason that this was created was due to other modules, although superior in terms of usability and stability, lacks documentation which makes it difficult for others to help, maintain, and improve the tool.
 
+To brag, this tool was meant to be as simple as possible.
+
 ## Aim ##
 
 - Not to be better than the existing libraries, but to provide more broad abilities
@@ -15,17 +17,17 @@ The primary reason that this was created was due to other modules, although supe
 
 *Coming soon to Bower.*
 
-Simply include the script in your page:
+**Add the CSS to your ```<head>```**:
 
+```html
+<head>
+	<link href="/path/to/angular-flash.css" rel="stylesheet" type="text/css">
+</head>
 ```
-<script type="text/javascript" src="/path/to/angular-flash.js"></script>
-```
 
-## Instructions ##
+**Put the directive next to your markup body**:
 
-**Put the directive next to your markup body**. 
-
-```
+```html
 <body>
 	<flash></flash>
 
@@ -33,7 +35,15 @@ Simply include the script in your page:
 </body>
 ```
 
-It is optional that you register new flash-message types. **By default,** we register the 4 basic types (info, sucess, error warning) with a respective Twitter Bootstrap alert class (alert alert-info, ...). If you have no intentions of adding new types or overwriting the existing ones, then do not bother with any of the configurations (see Extended sec).
+**Include the script in your page**:
+
+```html
+<script type="text/javascript" src="/path/to/angular-flash.js"></script>
+```
+
+## Instructions ##
+
+It is optional that you register new flash-message types. **By default,** we register the 4 basic ```types``` (```info```, ```success```, ```danger```, ```warning```) with a respective Twitter Bootstrap alert class (alert alert-info, ...). If you have no intentions of adding new types or overwriting the existing ones, then do not bother with any of the configurations (see Extended sec).
 
 **Flashing it to the DOM**. This is pretty easy by simply using the ```fire()``` function included in the ```$flash``` provider.
 
@@ -44,11 +54,16 @@ app.controller('HelloWorldCtrl', [
 	function($scope, $flash) {
 		$scope.fire = function() {
 			$flash.fire({ type: 'success', message: 'Hello World!' });
+			$flash.fire({ type: 'info', message: 'Hello World!' });
+			$flash.fire({ type: 'danger', message: 'Hello World!' });
+			$flash.fire({ type: 'warning', message: 'Hello World!' });
 		}
 	}
 ]);
 ```
 ## Extended ##
+
+### lifetime ###
 
 To assign the lifetime of each message, you may use the ```lifetime()``` function in the configuration phase (```angular.module().config()```) and pass the amount of milliseconds. By default, the lifetime is set to 10s.
 
@@ -62,6 +77,8 @@ app.config([
 	}
 ]);
 ```
+
+### custom types ###
 
 You **may** also **register your custom flash type with its respective class**. You may do this by injecting the $flashProvider during the configuration phase, and using the ```register()``` fn.
 
@@ -106,6 +123,13 @@ app.config([
 ]);
 ```
 
+### custom templates ###
+
+Coming soon!
+
+### namespaces ###
+
+
 You may overwrite existing types by registering a new type with the exact type name. ```info```, ```success```, ```error```, and ```warning``` has already been pre-registered as default (with respective Twitter Bootstrap alert classes).
 
 In this case, we are overwriting the ```info``` type.
@@ -121,7 +145,6 @@ app.config([
 	}
 ]);
 ```
-
 
 ## Example ##
 
@@ -160,7 +183,16 @@ For more updates, do check the [Trello](https://trello.com/b/5soqLral/ng-flash)
 
 ## Changelog ##
 
-**v1.1**
+**v0.2**
+- ng-animate support
+- Added CSS3 animation
+- Refactored a few lines to do things the angular way and to rename variables
+- Added ng-animate module for the example
+- Removed lifetime function parameter in the $get property in the provider (to avoid the lifetime being changed outside the config)
+- Added Twitter Bootstrap alert "close" button, placed remove function in this button
+- Clicking the alert now does not remove the message
+
+**v0.1**
 - Fixed flash.fire function when passed an array of objects
 - Clean function
 - Updated README (added gulp task to run)

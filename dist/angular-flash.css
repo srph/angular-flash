@@ -4,7 +4,7 @@
 	right: 0;
 	margin-left: auto;
 	margin-right: auto;
-	pointer-events:none;
+	pointer-events: none;
 	height: 0;
 	z-index: 9999;
 }
@@ -18,3 +18,94 @@
 	margin-right: auto;
 	pointer-events: visible;
 }
+
+.ng-notification-flash-inner.ng-enter,
+.ng-notification-flash-inner.ng-leave,
+.ng-notification-flash-inner.ng-move {
+	-webkit-transition: 0.5s all ease-in-out;
+	-moz-transition: 0.5s all ease-in-out;
+	-o-transition: 0.5s all ease-in-out;
+	transition: 0.5s all ease-in-out;
+}
+
+.ng-notification-flash-inner.ng-move.ng-move-active {
+	-webkit-transition: 2.5s all;
+}
+
+.ng-notification-flash-inner.ng-enter.ng-enter-active,
+.ng-notification-flash-inner.ng-move.ng-move-active {
+	-webkit-animation: 2s item_animation_enter;
+	-moz-animation: 2s item_animation_enter;
+	-o-animation: 2s item_animation_enter;
+		animation: 2s item_animation_enter;
+}
+
+.ng-notification-flash-inner.ng-leave.ng-leave-active,
+.ng-notification-flash-inner.ng-move.ng-move-active {
+	-webkit-animation: 2s item_animation_leave;
+	-moz-animation: 2s item_animation_leave;
+	-o-animation: 2s item_animation_leave;
+		animation: 2s item_animation_leave;
+
+	opacity: 0.5;
+/*	-webkit-animation: 2s item_animation_enter;
+	-moz-animation: 2s item_animation_enter;
+	-o-animation: 2s item_animation_enter;
+		animation: 2s item_animation_enter;*/
+}
+
+/* ng-enter */
+@keyframes item_animation_leave {
+	from { transform: scale(1); }
+	to { transform: scale(0); }
+}
+@-webkit-keyframes item_animation_leave {
+	from { -webkit-transform: scale(1); }
+	to { -webkit-transform: scale(0); }
+}
+
+@keyframes item_animation_enter {
+	10% { transform: scale(0); }
+	40% { transform: scale(1.5); }
+	50% { transform: scale(1); }
+}
+@-webkit-keyframes item_animation_enter {
+	10% { -webkit-transform: scale(0); }
+	20% { -webkit-transform: scale(1.5); }
+	50% { -webkit-transform: scale(1);
+}
+@-moz-keyframes item_animation_enter {
+	10% { -moz-transform: scale(0); }
+	40% { -moz-transform: scale(1.5); }
+	50% { -moz-transform: scale(1); }
+}
+@-o-keyframes item_animation_enter {
+	10% { -o-transform: scale(0); }
+	40% { -o-transform: scale(1.5); }
+	50% { -o-transform: scale(1); }
+}
+/* ng-leave */
+/*@keyframes item_animation_leave {
+	10% { transform: scaleY(1); }
+	20% { transform: scaleY(0.15); }
+	40% { transform: scaleY(0.3); }
+	100% { transform: scaleY(0); }
+}
+@-webkit-keyframes item_animation_leave {
+	10% { -webkit-transform: scale(1); }
+	20% { -webkit-transform: scale(0.15); }
+	40% { -webkit-transform: scale(0.3); }
+	100% { -webkit-transform: scale(0); }
+}*/
+/*@-moz-keyframes item_animation_leave {
+	10% { -webkit-transform: scaleY(1); }
+	20% { -webkit-transform: scaleY(0.15); }
+	40% { -webkit-transform: scaleY(0.3); }
+	100% { -webkit-transform: scaleY(1); }
+}
+@-o-keyframes item_animation_leave {
+	10% { -webkit-transform: scaleY(1); }
+	20% { -webkit-transform: scaleY(0.15); }
+	40% { -webkit-transform: scaleY(0.3); }
+	100% { -webkit-transform: scaleY(1); }
+}*/
