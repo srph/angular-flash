@@ -183,7 +183,7 @@ For more updates, do check the [Trello](https://trello.com/b/5soqLral/ng-flash)
 
 ## Changelog ##
 
-**v0.2**
+**v0.2.1**
 - ng-animate support
 - Added CSS3 animation
 - Refactored a few lines to do things the angular way and to rename variables
@@ -192,7 +192,7 @@ For more updates, do check the [Trello](https://trello.com/b/5soqLral/ng-flash)
 - Added Twitter Bootstrap alert "close" button, placed remove function in this button
 - Clicking the alert now does not remove the message
 
-**v0.1**
+**v0.2**
 - Fixed flash.fire function when passed an array of objects
 - Clean function
 - Updated README (added gulp task to run)
@@ -206,5 +206,5 @@ For more updates, do check the [Trello](https://trello.com/b/5soqLral/ng-flash)
 - Added CSS file
 - Updated instructions
 
-**v1.0**
+**v0.1**
 - Module is finally working. Out of the alpha phase
