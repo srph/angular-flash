@@ -26,27 +26,9 @@ Simply include the script in your page:
 	<!-- everything else -->
 </body>
 ```
+It is optional that you register flash-message types. **By default,** we register the 4 basic types (info, sucess, error warning) with a respective Twitter Bootstrap alert class (alert alert-info, ...). If you have no intentions of adding new types or overwriting the existing ones, then do not bother with any of the configurations (see Extended sec).
 
-**By default,** we register the 4 basic types (info, sucess, error warning) with a respective Twitter Bootstrap alert class (alert alert-info, ...). **If you have no intentions of adding new types or overwriting the existing ones**, then do not bother with any of the configurations.
-
-**Flashing it to the DOM**. This is pretty easy by simply using the ```fire()``` function included in the $flash provider.
-
-html:
-
-```
-<head>
-	<!-- stylesheet -->
-	<link href="/path/to/angular-flash.css" type="text/css" rel="stylesheet">
-</head>
-
-<body>
-	<div ng-controller="HelloWorldCtrl">
-		<button type="button" ng-click="fire()">Clickity Click</button>
-	</div>
-</body>
-````
-
-js:
+**Flashing it to the DOM**. This is pretty easy by simply using the ```fire()``` function included in the ```$flash``` provider.
 
 ```javascript
 app.controller('HelloWorldCtrl', [
@@ -59,8 +41,9 @@ app.controller('HelloWorldCtrl', [
 	}
 ]);
 ```
+## Extended ##
 
-To assign the lifetime of each message, you may use the ```lifetime()``` function and pass the amount of milliseconds. By default, the lifetime is set to 10s.
+To assign the lifetime of each message, you may use the ```lifetime()``` function in the configuration phase (```angular.module().config()```) and pass the amount of milliseconds. By default, the lifetime is set to 10s.
 
 ```javascript
 app.config([
@@ -73,7 +56,8 @@ app.config([
 ]);
 ```
 
-Yoy **may** also **register your custom flash type with its respective class**. You may do this by injecting the $flashProvider during the configuration phase, and using the ```register()``` fn.
+You **may** also **register your custom flash type with its respective class**. You may do this by injecting the $flashProvider during the configuration phase, and using the ```register()``` fn.
+
 
 ```javascript
 app.config([
