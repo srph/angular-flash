@@ -50,13 +50,13 @@ It is optional that you register new flash-message types. **By default,** we reg
 ```javascript
 app.controller('HelloWorldCtrl', [
 	'$scope', 
-	'$flash',
-	function($scope, $flash) {
+	'flash',
+	function($scope, flash) {
 		$scope.fire = function() {
-			$flash.fire({ type: 'success', message: 'Hello World!' });
-			$flash.fire({ type: 'info', message: 'Hello World!' });
-			$flash.fire({ type: 'danger', message: 'Hello World!' });
-			$flash.fire({ type: 'warning', message: 'Hello World!' });
+			flash.fire({ type: 'success', message: 'Hello World!' });
+			flash.fire({ type: 'info', message: 'Hello World!' });
+			flash.fire({ type: 'danger', message: 'Hello World!' });
+			flash.fire({ type: 'warning', message: 'Hello World!' });
 		}
 	}
 ]);
@@ -69,11 +69,11 @@ To assign the lifetime of each message, you may use the ```lifetime()``` functio
 
 ```javascript
 app.config([
-	'$flashProvider',
-	function($flashProvider) {
+	'flashProvider',
+	function(flashProvider) {
 		// This will make the lifetime of each message to 5 seconds
 		var ms = 5000;
-		$flashProvider.lifetime(ms);
+		flashProvider.lifetime(ms);
 	}
 ]);
 ```
@@ -84,9 +84,9 @@ You **may** also **register your custom flash type with its respective class**. 
 
 ```javascript
 app.config([
-	'$flashProvider',
-	function($flashProvider) {
-		$flashProvider.register({ type: 'info', class: 'alert alert-info' });
+	'flashProvider',
+	function(flashProvider) {
+		flashProvider.register({ type: 'info', class: 'alert alert-info' });
 	}
 ]);
 ```
@@ -95,9 +95,9 @@ You may also add more than one type by method-chaining since ```register()``` re
 
 ```
 app.config([
-	'$flashProvider',
-	function($flashProvider) {
-		$flashProvider
+	'flashProvider',
+	function(flashProvider) {
+		flashProvider
 			.register({ type: 'info', class: 'alert alert-info' })
 			.register({ type: 'success', class: 'alert alert-success' })
 			.register({ type: 'error', class: 'alert alert-danger' })
@@ -110,9 +110,9 @@ It is also possible to it in another way. By using arrays of objects instead.
 
 ```
 app.config([
-	'$flashProvider',
-	function($flashProvider) {
-		$flashProvider
+	'flashProvider',
+	function(flashProvider) {
+		flashProvider
 			.register([
 				{ type: 'info', class: 'alert alert-info' },
 				{ type: 'success', class: 'alert alert-success' },
@@ -136,9 +136,9 @@ In this case, we are overwriting the ```info``` type.
 
 ```
 app.config([
-	'$flashProvider',
-	function($flashProvider) {
-		$flashProvider
+	'flashProvider',
+	function(flashProvider) {
+		flashProvider
 			.register([
 				{ type: 'info', class: 'my-custom-info-message' },
 			]);
