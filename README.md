@@ -45,7 +45,7 @@ To brag, this tool was meant to be as simple as possible.
 
 It is optional that you register new flash-message types. **By default,** we register the 4 basic ```types``` (```info```, ```success```, ```danger```, ```warning```) with a respective Twitter Bootstrap alert class (alert alert-info, ...). If you have no intentions of adding new types or overwriting the existing ones, then do not bother with any of the configurations (see Extended sec).
 
-**Flashing it to the DOM**. This is pretty easy by simply using the ```fire()``` function included in the ```$flash``` provider.
+**Flashing it to the DOM**. This is pretty easy by simply using the ```fire()``` function included in the ```flash``` provider.
 
 ```javascript
 app.controller('HelloWorldCtrl', [
@@ -80,7 +80,7 @@ app.config([
 
 ### custom types ###
 
-You **may** also **register your custom flash type with its respective class**. You may do this by injecting the $flashProvider during the configuration phase, and using the ```register()``` fn.
+You **may** also **register your custom flash type with its respective class**. You may do this by injecting the ```flashProvider``` during the configuration phase, and using the ```register()``` fn.
 
 ```javascript
 app.config([
@@ -91,7 +91,7 @@ app.config([
 ]);
 ```
 
-You may also add more than one type by method-chaining since ```register()``` returns the ```$flashProvider``` instance.
+You may also add more than one type by method-chaining since ```register()``` returns the ```flashProvider``` instance.
 
 ```
 app.config([
