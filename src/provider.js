@@ -111,7 +111,7 @@ app.provider('$flash', [function() {
 			// array of objects
 			angular.forEach(data, function(value, key) {
 				this.register(value);
-			}, _this);
+			}, this);
 		} else if ( angular.isObject(data) ) {
 			var position;
 			// If the given name has already been registered
