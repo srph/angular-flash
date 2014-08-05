@@ -1,13 +1,13 @@
 app.directive('flash', [function() {
 
-	var controller = function($scope, $rootScope, $timeout, $flash) {
-		$scope.list = $flash.list();
+	var controller = function($scope, $rootScope, $timeout, flash) {
+		$scope.list = flash.list();
 		// Removes the first one in the list every 5 seconds
 		// until none remains
 		var shift = function() {
 			$timeout(function() {
-				$flash.shift();
-			}, $flash.lifetime(), true);
+				flash.shift();
+			}, flash.lifetime(), true);
 		}
 
 		/**
@@ -17,7 +17,7 @@ app.directive('flash', [function() {
 		 * @return 	{void}
 		 */
 		$scope.close = function(pos) {
-			$flash.remove(pos);
+			flash.remove(pos);
 		}
 
 		$rootScope.$on('$flashFired', function() {
@@ -48,7 +48,7 @@ app.directive('flash', [function() {
 			'$scope',
 			'$rootScope',
 			'$timeout',
-			'$flash',
+			'flash',
 			controller
 		]
 	}
