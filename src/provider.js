@@ -33,10 +33,20 @@ app.provider('$flash', [function() {
 
 	/**
 	 * List of registered names
+	 * 
+	 * '_registry' directly to the 'bootstrap' (defaults)
+	 * causes changes to '_registry' reflect on the 'bootstrap' array.
+	 * 'angular.copy' may not be good performance-wise,
+	 * however this avoids this problem.
 	 *
+	 * angular.copy MAY not be performant. This code is still
+	 * being decided.
+	 * 
 	 * @var array
 	 */
-	this._registry = this.bootstrap;
+	this._registry = (function(default) {
+		return angular.copy(default);
+	})(this.bootstrap);
 
 	/**
 	 * A get or setter for the lifetime of each flash
