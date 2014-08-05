@@ -1,4 +1,4 @@
-app.provider('$flash', [function() {
+app.provider('flash', [function() {
 	/**
 	 * Lifetime of each flash
 	 *
