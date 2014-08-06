@@ -37,9 +37,9 @@ gulp.task('scripts', function() {
 // Uglifies the main script
 gulp.task('uglify', function() {
 	return gulp.src(dist + 'angular-flash.js', { base: './' })
-		.pipe(uglify({ mangle: false }))
+		.pipe(uglify({ mangle: true }))
 		.pipe(rename('angular-flash.min.js'))
-		.pipe(gulp.dest('./'))
+		.pipe(gulp.dest(dist))
 		.pipe(livereload())
 		.pipe(notify({ message: 'Uglified your ugly script!' }));
 });
