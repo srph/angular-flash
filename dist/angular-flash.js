@@ -89,20 +89,21 @@ app.provider('flash', function() {
 
 	/**
 	 * Returns the data of the type
-	 * Almost an alias to the getPositionOfType function
 	 *
-	 * -1 = false
-	 * Otherwise, true
+	 * If the type does not exist, it returns the -1 value.
+	 * Otherwise, returns the registry data.
 	 *
 	 * @param 	{str} 	type
 	 * @return 	{int}
 	 */
 	var _getDataOfType = function(type) {
-		var index = _getPositionOfType(type);
+		var index = _getPositionOfType(type),
 
-		return ( angular.equals(index, -1) )
-			? index
-			: _registry[index];
+			// Reflects the position of the type
+			// Alias
+			resultNegative = angular.equals(index, -1);
+
+		return ( resultNegative ) ? index : _registry[index];
 	};
 
 	/**
@@ -121,7 +122,7 @@ app.provider('flash', function() {
 	 *
 	 * @var 	int
 	 */
-	this._lifetime = 10000;
+	var _lifetime = 10000;
 
 	/**
 	 * List of registered names
@@ -141,10 +142,10 @@ app.provider('flash', function() {
 	 */
 	this.lifetime = function(ms) {
 		if ( angular.isDefined(ms) ) {
-			this._lifetime = ms;
+			_lifetime = ms;
 		}
 
-		return this._lifetime;
+		return _lifetime;
 	};
 
 	/**
@@ -393,15 +394,21 @@ app.provider('flash', function() {
 });
 app.directive('flash', function () {
 
-	function FlashCtrl ($scope, $rootScope, $timeout, flash) {
+	function FlashCtrl ($scope, $rootScope, $timeout, $log, flash) {
+		var shiftTimeout;
 		$scope.list = flash.list();
 		// Removes the first one in the list every 5 seconds
 		// until none remains
-		var shift = function() {
-			$timeout(function() {
-				flash.shift();
-			}, flash.lifetime(), true);
+		var shift = function () {
+			flash.shift();
+			
+			if(flash.list().length === 0) {
+				$timeout.cancel(shiftTimeout);
+			}
+
+			shiftTimeout = $timeout(shift, flash.lifetime(), true);
 		};
+
 
 		/**
 		 * Close the clicked item
@@ -419,10 +426,16 @@ app.directive('flash', function () {
 		// });
 
 		$scope.$watch('list', function (newVal, oldVal) {
-			shift();
+			if(oldVal.length == 0 && newVal.length == 1) {
+				shiftTimeout = $timeout(shift, flash.lifetime(), true);
+			}
+
+
+			$log.info('Old:' + oldVal.length);
+			$log.info('New:' + newVal.length);
 		}, true);
 	}
-	FlashCtrl.$inject = ["$scope", "$rootScope", "$timeout", "flash"];;
+	FlashCtrl.$inject = ["$scope", "$rootScope", "$timeout", "$log", "flash"];;
 
 	// Directive template
 	var template =
