@@ -5,10 +5,6 @@ var
 
 var
 	gulp 		= require('gulp'),
-	livereload	= require('gulp-livereload'),
-	notify		= require('gulp-notify'),
-	install		= require('gulp-install'),
-	connect		= require('gulp-connect'),
 	concat		= require('gulp-concat'),
 	rename 		= require('gulp-rename'),
 	uglify		= require('gulp-uglify');
@@ -16,22 +12,12 @@ var
 var express 	= require('express'),
 	app 		= express();
 
-// Install Bower components
-gulp.task('install', function() {
-	// Locate the source file then run the install function
-	return gulp.src(['./bower.json'])
-		.pipe(install())
-		.pipe(notify({ message: 'Scripts installed!' }));
-});
-
 gulp.task('scripts', function() {
 	// Locate all js files in the src folder
 	return gulp.src([src + 'module.js', src + 'provider.js', src + 'directive.js'])
 		// Concatenate all file then move to the dist/ folder
 		.pipe(concat('angular-flash.js'))
 		.pipe(gulp.dest(dist))
-		.pipe(livereload())
-		.pipe(notify({ message: 'Scripts tasks completed!' }));
 });
 
 // Uglifies the main script
@@ -40,8 +26,6 @@ gulp.task('uglify', function() {
 		.pipe(uglify({ mangle: true }))
 		.pipe(rename('angular-flash.min.js'))
 		.pipe(gulp.dest(dist))
-		.pipe(livereload())
-		.pipe(notify({ message: 'Uglified your ugly script!' }));
 });
 
 gulp.task('server', function() {
@@ -67,8 +51,4 @@ gulp.task('default', function() {
 	// Watch for file changes
 	gulp.watch(src + '*.js', ['scripts']);
 	gulp.watch(dist + '*.js', ['uglify']);
-	gulp.watch(ex + 'index.html')
-		.on('change', function(file) {
-			server.changed(file);
-		});
 });
