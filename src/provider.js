@@ -1,15 +1,17 @@
-app.provider('flash', [function() {
+app.provider('flash', function() {
 	/**
-	 * Lifetime of each flash
+	 * Overwrites an existing data on the given position
 	 *
-	 * @var 	int
 	 */
-	this._lifetime = 10000;
+	var _overwrite = function(position, data) {
+		_registry[position] = data;
+	};
 
 	/**
-	 * Bootstrap configuration
+	 * Bootstrap classes defaults
+	 * @type {Array}
 	 */
-	this.bootstrap = [
+	var _bootstrapDefaults = [
 		{
 			'type': 'success',
 			'class': 'alert alert-success alert-dismissible'
@@ -29,7 +31,7 @@ app.provider('flash', [function() {
 			'type': 'danger',
 			'class': 'alert alert-danger alert-dismissible'
 		}
-	];	
+	];
 
 	/**
 	 * List of registered names
@@ -42,11 +44,94 @@ app.provider('flash', [function() {
 	 * angular.copy MAY not be performant. This code is still
 	 * being decided.
 	 * 
-	 * @var array
+	 * @type {Array}
 	 */
-	this._registry = (function(_default) {
-		return angular.copy(_default);
-	})(this.bootstrap);
+	var _registry = (function(_defaults) {
+		return angular.copy(_defaults);
+	})(_bootstrapDefaults);
+
+	/**
+	 * The actual "register" implementation
+	 * 
+	 * @param  {[type]} data
+	 * @return {[type]}
+	 */
+	var _register = function (data) {
+		var position;
+		// If the given name has already been registered
+		// in the registry, cancel operations and return an error
+		if ( ( position = _isInRegistry(data.type) ) ) {
+			// return console.error('Given name is already in the registry');
+			_overwrite(position, data);
+		}
+
+		// Push the data to the registry
+		_registry.push(data);
+	};
+
+	/**
+	 * Returns the position of the type
+	 *
+	 * @param 	string 		name
+	 * @return 	int
+	 */
+	var _getPositionOfType = function(type) {
+		// Stores the fetched index of the given type
+		var index = _registry
+			.map(function(cur) {
+				return cur.type;
+			})
+			.indexOf(type);
+
+		return index;
+	};
+
+	/**
+	 * Returns the data of the type
+	 *
+	 * If the type does not exist, it returns the -1 value.
+	 * Otherwise, returns the registry data.
+	 *
+	 * @param 	{str} 	type
+	 * @return 	{int}
+	 */
+	var _getDataOfType = function(type) {
+		var index = _getPositionOfType(type),
+
+			// Reflects the position of the type
+			// Alias
+			resultNegative = angular.equals(index, -1);
+
+		return ( resultNegative ) ? index : _registry[index];
+	};
+
+	/**
+	 * Checks if the passed type is already in the registry.
+	 * Alias to the getPositionOfType function
+	 *
+	 * @param 	string 		name
+	 * @return 	int
+	 */
+	var _isInRegistry = function(type) {
+		return _getPositionOfType(type);
+	};
+
+	/**
+	 * Lifetime of each flash
+	 *
+	 * @var 	int
+	 */
+	var _lifetime = 10000;
+
+	/**
+	 * List of registered names
+	 * 
+	 * @see
+	 * _registry
+	 * 
+	 * @type {Array}
+	 */
+	this._registry = _registry;
 
 	/**
 	 * A get or setter for the lifetime of each flash
@@ -56,61 +141,18 @@ app.provider('flash', [function() {
 	 */
 	this.lifetime = function(ms) {
 		if ( angular.isDefined(ms) ) {
-			this._lifetime = ms;
+			_lifetime = ms;
 		}
 
-		return this._lifetime;
-	}
-
-	/**
-	 * Returns the position of the type
-	 *
-	 * @param 	string 		name
-	 * @return 	int
-	 */
-	this.getPositionOfType = function(type) {
-		// Stores the fetched index of the given type
-		var index = this._registry
-			.map(function(cur) {
-				return cur.type
-			})
-			.indexOf(type);
-
-		return index;
-	}
-
-	/**
-	 * Returns the data of the type
-	 * Almost an alias to the getPositionOfType function
-	 *
-	 * -1 = false
-	 * Otherwise, true
-	 *
-	 * @param 	{str} 	type
-	 * @return 	{int}
-	 */
-	this.getDataOfType = function(type) {
-		var index = this.getPositionOfType(type);
-
-		return ( angular.equals(index, -1) )
-			? index
-			: this._registry[index];
-	}
-
-	/**
-	 * Checks if the passed type is already in the registry.
-	 * Alias to the getPositionOfType function
-	 *
-	 * @param 	string 		name
-	 * @return 	int
-	 */
-	this.isInRegistry = function(type) {
-		return this.getPositionOfType(type);
-	}
+		return _lifetime;
+	};
 
 	/**
 	 * Registers the name with its respective class to
 	 * the service registry
+	 *
+	 * @see
+	 * _overwrite
 	 *
 	 * @param 	object|array 	data	Data?
 	 * @return 	this
@@ -123,220 +165,229 @@ app.provider('flash', [function() {
 				this.register(value);
 			}, this);
 		} else if ( angular.isObject(data) ) {
-			var position;
-			// If the given name has already been registered
-			// in the registry, cancel operations and return an error
-			if ( position = this.isInRegistry(data.type) ) {
-				// return console.error('Given name is already in the registry');
-				this.overwrite(position, data);
-			}
-
-			// Push the data to the registry
-			this._registry.push(data);
+			_register(data);
 		} else {
 			throw new Error('Registered data is not an object!');
 		}
 
 		// Return the object for method chaining
 		return this;
-	}
-
-	/**
-	 * Overwrites an existing data on the given position
-	 *
-	 */
-	this.overwrite = function(position, data) {
-		this._registry[position] = data;
-	}
+	};
 
 	// Reference to our this
 	var _this = this;
 
-	this.$get = [
-		'$rootScope',
-		function($rootScope) {
-			var flash = {};
+	this.$get = function($rootScope) {
+		var flash = {};
 
-			/**
-			 * List of messages being shown
-			 *
-			 * @var array
-			 */
-			flash._list = [];
+		/**
+		 * List of messages being shown
+		 *
+		 * @var array
+		 */
+		var _list = [];
 
-			/**
-			 * Get the set lifetime of each flash
-			 *
-			 * @var int
-			 */
-			flash.lifetime = function() {
-				return _this.lifetime()
-			};
+		/**
+		 * Gets the class of the provided position in the registry
+		 * 
+		 * @param  {[int]} position
+		 * @return {[type]}
+		 */
+		var _getClass = function (position) {
+			position = parseInt(position, 10);
 
-			/**
-			 * Flash the message right now
-			 *
-			 * @see
-			 * _hasSimilarMessages()
-			 * _isUnique
-			 *
-			 * @param 	object 	data
-			 * @return 	this
-			 */
-			flash.fire = function(data) {
-				if ( angular.isArray(data) )  {
-					// Recursion when the passed argument is an
-					// array of objects
-					angular.forEach(data, function(value, key) {
-						this.fire(value);
-					}, this);
-				} else if ( angular.isObject(data) ) {
+			return _this._registry[position].class;
+		};
 
-					var position;
+		/**
+		 *
+		 * @function
+		 * This fetches all similar messages
+		 *
+		 * @param
+		 * int 		message
+		 *
+		 * @return
+		 * {bool}|{int}
+		 */
+		var _getSimilarMessages = function(message) {
+			// This maps only the 'message' property in each object in
+			// the array, allowing us to grab the index of the
+			// fn argument with indexOf.
+			var similarIndex = flash.list()
+				.map(function(cur) {
+					return cur.message;
+				})
+				.indexOf(message);
 
-					// If the fired message has a nonexistent 'type', throw
-					// an exception.
-					if ( ( position = _this.isInRegistry(data.type) ) == -1 ) {
-						throw new Error(data.type + ' is not defined in the registry!');
-					}
+			return similarIndex;
+		};
 
-					// If the message is not unique nor there are any
-					// similar messages
-					if ( !this._isUnique(data) ) {
-						// Add the class of the provided type to the passed data
-						data['class'] = _this._registry[position]['class'];
+		/**
+		 *
+		 * @see
+		 * ._getSimilarMessages()
+		 *
+		 * @param
+		 * int 		message
+		 *
+		 * @return
+		 * bool
+		 */
+		var _hasSimilarMessages = function(message) {
+			var similarIndex = _getSimilarMessages(message);
 
-						// Push the flash to the list
-						this.list().push(data);
+			return ( angular.equals(similarIndex, -1) )	? false : true;
+		};
 
-						// Emit that fn is complete
-						$rootScope.$emit('$flashFired');
-					}
-				} else {
-					throw new Error('Not an object nor an array');
+		/**
+		 *
+		 * @function
+		 * Checks if the unique property of the given data is set to true
+		 *
+		 * @see
+		 * ._hasSimilarMessages()
+		 *
+		 * @return
+		 * bool
+		 */
+		var _isUnique = function(data) {
+			if ( angular.equals(data.unique, true) ) {
+				if ( _hasSimilarMessages(data.message) ) {
+					return true;
 				}
-
-				return this;
-			};
-
-			/**
-			 *
-			 * @function
-			 * Checks if the unique property of the given data is set to true
-			 *
-			 * @see
-			 * ._hasSimilarMessages()
-			 *
-			 * @return
-			 * bool
-			 */
-			flash._isUnique = function(data) {
-				if ( angular.equals(data.unique, true) ) {
-					if ( this._hasSimilarMessages(data.message) ) {
-						return true;
-					}
-				}
-
-				return false;
-			};
-
-			/**
-			 *
-			 * @function
-			 * This fetches all similar messages
-			 *
-			 * @param
-			 * int 		message
-			 *
-			 * @return
-			 * {bool}|{int}
-			 */
-			flash._getSimilarMessages = function(message) {
-				// This maps only the 'message' property in each object in
-				// the array, allowing us to grab the index of the
-				// fn argument with indexOf.
-				var similarIndex = this.list()
-					.map(function(cur) {
-						return cur.message;
-					})
-					.indexOf(message);
-
-				return similarIndex;
 			}
 
-			/**
-			 *
-			 * @see
-			 * ._getSimilarMessages()
-			 *
-			 * @param
-			 * int 		message
-			 *
-			 * @return
-			 * bool
-			 */
-			flash._hasSimilarMessages = function(message) {
-				var similarIndex = this._getSimilarMessages(message);
+			return false;
+		};
 
-				return ( angular.equals(similarIndex, -1) )
-					? false
-					: true;
-			};
+		/**
+		 * The actual "fire" / message flash implementation
+		 *
+		 * @see
+		 * _isUnique()
+		 * this.isInRegistry()
+		 * flash.list()
+		 * 
+		 * @param  {[object]} data
+		 * @return {[void]}
+		 */
+		var _fire = function (data) {
+			var position;
 
-			/**
-			 * Removes a data in the given position of the list
-			 *
-			 * @param 	{int} 	pos
-			 * @return 	{void}
-			 */
-			flash.remove = function(pos) {
-				this.list().splice(pos, 1);
+			// Alias to the type property of the passed data
+			// for the sake of semantics
+			var type = data.type;
 
-				$rootScope.$emit('$flashFireRemoved');
-			};
+			// If the fired message has a nonexistent 'type', throw
+			// an exception.
+			if ( ( position = _isInRegistry(type) ) == -1 ) {
+				throw new Error(data.type + ' is not defined in the registry!');
+			}
 
-			/**
-			 * Removes everything in the list
-			 *
-			 * @return 	{void}
-			 */
-			flash.clean = function() {
-				this.list([]);
-			};
+			// If the message is not unique nor there are any
+			// similar messages
+			if ( !_isUnique(data) ) {
+				// Add the class of the provided type to the passed data
+				data.class = _getClass(position);
 
-			/**
-			 * Shifts the list. This avoids direct shifting
-			 * of the list (also for encapsulation)
-			 *
-			 * @return 	{void}
-			 */
-			flash.shift = function() {
-				this.list().shift();
+				// Push the flash to the list
+				flash.list().push(data);
 
-				$rootScope.$emit('$flashFiredRemoved');
-			};
+				// Emit that fn is complete
+				$rootScope.$emit('$flashFired');
+			}
+		};
 
-			/**
-			 * A setter/getter for the _list variables (encapsulation)
-			 *
-			 * @return 	{array}
-			 */
-			flash.list = function(newList) {
-				if ( angular.isDefined(newList) ) {
-					// If the passed argument is not an array,
-					// throw an exception
-					if ( ! angular.isArray(newList) ) {
-						throw new Error('New _list is not an array!');
-					}
+		/**
+		 * Get the set lifetime of each flash
+		 *
+		 * @var int
+		 */
+		flash.lifetime = function() {
+			return _this.lifetime();
+		};
 
-					// Assign the passed argument to _list
-					this._list = newList;
+		/**
+		 * Flash the message
+		 *
+		 * @see
+		 * _fire
+		 *
+		 * @param 	object 	data
+		 * @return 	this
+		 */
+		flash.fire = function(data) {
+			// Recursion when the passed argument is an array of objects.
+			// If not but and object, fire the message.
+			// Otherwise, throw an exception.
+			if ( angular.isArray(data) )  {
+				angular.forEach(data, function(value, key) {
+					this.fire(value);
+				}, this);
+			} else if ( angular.isObject(data) ) {
+				_fire(data);
+			} else {
+				throw new Error('Data is neither an object nor an array');
+			}
+				
+			// Return the instance for method chaining
+			return this;
+		};
+
+		/**
+		 * Removes a data in the given position of the list
+		 *
+		 * @param 	{int} 	pos
+		 * @return 	{void}
+		 */
+		flash.remove = function(pos) {
+			this.list().splice(pos, 1);
+
+			$rootScope.$emit('$flashFireRemoved');
+		};
+
+		/**
+		 * Removes everything in the list
+		 *
+		 * @return 	{void}
+		 */
+		flash.clean = function() {
+			this.list([]);
+		};
+
+		/**
+		 * Shifts the list. This avoids direct shifting
+		 * of the list (also for encapsulation)
+		 *
+		 * @return 	{void}
+		 */
+		flash.shift = function() {
+			this.list().shift();
+
+			$rootScope.$emit('$flashFiredRemoved');
+		};
+
+		/**
+		 * A setter/getter for the _list variables (encapsulation)
+		 *
+		 * @return 	{array}
+		 */
+		flash.list = function(newList) {
+			if ( angular.isDefined(newList) ) {
+				// If the passed argument is not an array,
+				// throw an exception
+				if ( ! angular.isArray(newList) ) {
+					throw new Error('New _list is not an array!');
 				}
 
-				return this._list;
-			};
+				// Assign the passed argument to _list
+				_list = angular.copy(newList);
+			}
 
-			return flash;
-		}
-	];
-}]);
+			return _list;
+		};
+
+		return flash;
+	};
+});

@@ -1,6 +1,6 @@
-app.directive('flash', [function() {
+app.directive('flash', function () {
 
-	var controller = function($scope, $rootScope, $timeout, flash) {
+	function FlashCtrl ($scope, $rootScope, $timeout, flash) {
 		$scope.list = flash.list();
 		// Removes the first one in the list every 5 seconds
 		// until none remains
@@ -8,7 +8,7 @@ app.directive('flash', [function() {
 			$timeout(function() {
 				flash.shift();
 			}, flash.lifetime(), true);
-		}
+		};
 
 		/**
 		 * Close the clicked item
@@ -18,12 +18,16 @@ app.directive('flash', [function() {
 		 */
 		$scope.close = function(pos) {
 			flash.remove(pos);
-		}
+		};
 
-		$rootScope.$on('$flashFired', function() {
-			// Let the removal of every 0-index in the array begin
+		// $rootScope.$on('$flashFired', function() {
+		// 	// Let the removal of every 0-index in the array begin
+		// 	shift();
+		// });
+
+		$scope.$watch('list', function (newVal, oldVal) {
 			shift();
-		});
+		}, true);
 	};
 
 	// Directive template
@@ -44,12 +48,6 @@ app.directive('flash', [function() {
 		restrict:'AE',
 		transclude: true,
 		template: template,
-		controller: [
-			'$scope',
-			'$rootScope',
-			'$timeout',
-			'flash',
-			controller
-		]
-	}
-} ]);
+		controller: FlashCtrl
+	};
+});

@@ -70,8 +70,8 @@ app.controller('ExCtrl', ["$scope", "flash", function ($scope, flash) {
 		randomizer();
 
 		var type =  types[random],
-			// message = 'If there is another message of same type and message, it will not flash until this one expires.';
-			message = messages[random];
+			message = 'If there is another message of same type and message, it will not flash until this one expires.';
+			// message = messages[random];
 
 		flash.fire({ 'type': type, 'message': message, unique: true });
 	};
