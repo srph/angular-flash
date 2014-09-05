@@ -6,64 +6,17 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<link href="modules/angular-flash.css" rel="stylesheet" type="text/css">
-	<style>
-		body {
-			min-height: 100%;
-		}
-
-		.alert {
-			width: 250px;
-		}
-
-		.container {
-			width: 700px;
-			height: 100%;
-		}
-
-		.love {
-			color: #F32828;
-		}
-
-		footer {
-			position: relative;
-			left: 0;
-			bottom: 0;
-			height: 50px;
-			width: 100%;
-			padding-top: 15px;
-			padding-bottom: 15px;
-			vertical-align: middle;
-			color: #fff;
-			background: #202020;
-			border-radius: 0 0 4px 4px;
-		}
-	</style>
+	<link href="dist/angular-flash.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" type="text/css" href="stylesheet.css">
 </head>
 
 <body>
 	<flash></flash>
 	<h1 class="text-center"> Angular Flash Examples </h1>
 	<div class="container text-center" style="margin-top: 25px; margin-bottom: 25px;">
-		<!-- -->
-		<h6> Simply <code>flash</code> a message to the DOM </h6>
-		<div ng-controller="ExCtrl">
-			<button type="button" ng-click="flash()" class="btn btn-primary"> Flash </button>
+		<div ui-view>
+			init
 		</div>
-
-		<!-- -->
-		<hr>
-		<h6> Flash a <code>unique</code> message to the DOM </h6>
-		<p> This means that any similar messages cannot be duplicated. </p>
-		<div ng-controller="ExCtrl">
-			<button type="button" ng-click="flashUnique()" class="btn btn-info"> Flash Unique </button>
-		</div>
-
-		<!-- -->
-		<hr>
-		<h6> Flash a <strong>immortal</strong> message to the DOM </h6>
-		<p> Immortal messages will have an <strong>immortal</strong> <code>lifetime</code>, and can only be removed manually (or by clicking the remove button) </p>
-		<h6> <small> Coming Soon! </small> </h6>
 
 		<!-- -->
 		<footer>
@@ -73,66 +26,8 @@
 
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular-animate.js"></script>
-	<script type="text/javascript" src="modules/angular-flash.js"></script>
-
-	<script type="text/javascript">
-
-			var app = angular.module('app', ['angular-flash', 'ngAnimate']);
-
-			app.config([
-				'flashProvider',
-				function(flashProvider) {
-					console.log(flashProvider);
-					// flashProvider
-					// 	.register({ 'type': 'error', 'class': 'alert alert-danger'})
-					// 	.register({ 'type': 'success', 'class': 'alert alert-success'})
-					// 	.register({ 'type': 'info', 'class': 'alert alert-info'})
-					// 	.register({ 'type': 'warning', 'class': 'alert alert-warning'});
-
-					flashProvider.register([
-						{ 'type': 'info', 'class': 'alert alert-info'},
-						{ 'type': 'warning', 'class': 'alert alert-warning' },
-					]);
-
-					// An example of lifetime being configured
-					flashProvider.lifetime(5000);
-				}
-			]);
-
-			app.controller('ExCtrl', [
-				'$scope',
-				'flash',
-				function($scope, flash) {
-					var random, types, messages;
-
-					var randomizer = function() {
-						random = Math.ceil(Math.random() * (3) + 0);
-						types = ['danger', 'success', 'info', 'warning'];
-						message = ['Currently processing your request...', 'Yes, milord!', 'Justice is ours.', 'I came in like a wrecking ball!'];
-					};
-
-					randomizer();
-
-					$scope.flash = function() {
-						randomizer();
-
-						flash.fire({ 'type': types[random], 'message':  message[random] });
-					};
-
-					$scope.flashUnique = function() {
-						flash.fire({ 'type': 'info', 'message':  'This is a unique message!', unique: true });
-					};
-				}
-			]);
-
-		angular.element(document).ready(function() {
-			console.log('Application is starting..');
-			try {
-				angular.bootstrap(document, ['app']);
-			} catch(e) {
-				console.log(e);
-			}
-		});
-	</script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
+	<script type="text/javascript" src="dist/angular-flash.js"></script>
+	<script type="text/javascript" src="build.js"></script>
 </body>
 </html>

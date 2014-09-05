@@ -1,0 +1,30 @@
+body {
+	min-height: 100%;
+}
+
+.alert {
+	width: 250px;
+}
+
+.container {
+	width: 700px;
+	height: 100%;
+}
+
+.love {
+	color: #F32828;
+}
+
+footer {
+	position: relative;
+	left: 0;
+	bottom: 0;
+	height: 50px;
+	width: 100%;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	vertical-align: middle;
+	color: #fff;
+	background: #202020;
+	border-radius: 0 0 4px 4px;
+}
