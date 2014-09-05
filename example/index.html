@@ -109,7 +109,7 @@
 						random = Math.ceil(Math.random() * (3) + 0);
 						types = ['danger', 'success', 'info', 'warning'];
 						message = ['Currently processing your request...', 'Yes, milord!', 'Justice is ours.', 'I came in like a wrecking ball!'];
-					}
+					};
 
 					randomizer();
 
@@ -117,11 +117,11 @@
 						randomizer();
 
 						flash.fire({ 'type': types[random], 'message':  message[random] });
-					}
+					};
 
 					$scope.flashUnique = function() {
 						flash.fire({ 'type': 'info', 'message':  'This is a unique message!', unique: true });
-					}
+					};
 				}
 			]);
 
