@@ -1,7 +1,7 @@
 angular-flash
 =============
 
-** I am no longer supporting this project. TL;DR: Project dropped. **
+**I am no longer supporting this project.** ***TL;DR*** **: Project dropped.**
 
 An AngularJS module that allows you to flash a notification to the DOM.
 
